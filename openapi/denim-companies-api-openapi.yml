@@ -1,0 +1,524 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: engineering@denim.com
+    name: Denim Engineering Team
+    url: https://www.denim.com
+  description: The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.
+  title: Denim Public API Reference Documentation Companies API
+  version: 1.0.0
+  x-logo:
+    altText: Denim
+    backgroundColor: '#f5f5f5'
+    url: https://app.denim.com/images/branding/denim-logo-color.png
+servers:
+- description: Staging Environment
+  url: https://staging.denim.com
+  variables: {}
+security:
+- api_key: []
+tags:
+- description: A company in our system includes Payees, Debtors, and Factoring companies. Companies records are available globally in our ecosystem and shared by other clients.
+  externalDocs:
+    description: 'Guides: Companies'
+    url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+  name: Companies
+paths:
+  /api/v1/companies:
+    get:
+      callbacks: {}
+      description: "Returns a paginated list of company search results.\n\n### What you can search by\nThe `query` parameter is matched against:\n- `company_name` (token-based, normalized — see the `query` parameter for details)\n- `mc_number` (exact equality)\n- `dot_number` (exact equality)\n\nWhen `query` is omitted or empty, the endpoint returns all eligible companies ordered by\n`sort` (defaults to `company_name`). Inactive and duplicate companies are always\nexcluded; when `company_type=debtor`, companies that are payee-only (not also a debtor or client) are excluded.\n\n### Pagination\nResults are paginated. Defaults are `page=1` and `per_page=25`. The response always\nincludes `page`, `per_page`, `total_pages`, and `total_results` fields alongside `data`.\n\n### Multi-strategy text search\nFor non-numeric (or numeric-but-not-`exact_numeric_mode`) queries, the search tries:\n1. **Token ILIKE** against the normalized `company_name` (primary path).\n2. **Trigram similarity** (`similarity > 0.3`) fallback when ILIKE returns nothing.\n3. **Prefix full-text search** (`to_tsquery` with `:*` per token) as a final fallback.\n\nThis makes the search resilient to typos and partial-word queries.\n\n### How matches are ranked\nPass `sort=best_match` to rank results by relevance to `query`. For\n`company_type=debtor`, ranking factors in priority order are:\n\n1. Exact normalized name match.\n2. Number of query tokens found in `company_name`.\n3. Number of adjacent query-token pairs found in `company_name`.\n4. Active status (only applied to exact-name matches).\n5. Existence of a Client-Debtor Relationship between the requesting client and the company.\n6. CDR popularity (distinct clients with a non-deleted CDR for the company).\n7. Credit amount — `max(debtor.credit_limit, debtor.shared_credit_limit)`. When the\n   company has multiple CDRs, the row with the highest credit wins.\n8. Trigram similarity (fuzzy fallback).\n9. Company `id` ascending (stable tiebreaker).\n\nSee the `sort` parameter for the non-debtor ranking chain.\n\n### MC / DOT exact lookup\nWhen `company_type=debtor` AND `sort=best_match` AND `query` is purely numeric, the\nsearch short-circuits to an exact `mc_number` / `dot_number` match and returns at most\none row in `data`. `total_results` still reflects the true number of matches so callers\ncan detect MC/DOT collisions.\n\n### Outputs\nEach result entry includes:\n- `company` — identity, address, status, `is_debtor` / `is_payee` / `is_factor` flags,\n  and `last_payment_applied_at` (timestamp of the most recent payment received from this\n  company across the platform — the customer's \"last paid date\").\n- `debtor` (only when `company.is_debtor=true`) — shared credit limit (`credit_limit`)\n  and net terms (`net_terms`). Open-credit (`credit_limit - credit_used`) is not\n  computed here; fetch it via the Client-Debtor Relationships endpoint when needed.\n- `client_debtor_relationship` (only when a non-deleted CDR exists for the requesting\n  client) — relationship `id`, `status`, `noa_status`, `default_job_is_factored`, and\n  `net_terms`. The `id` can be used as `client_debtor_relationship_id` in other API\n  requests.\n- `payee` (only when `company.is_payee=true`) — factor company name.\n- `client_payee_relationship` (only when a non-deleted CPR exists) — relationship `id`,\n  `contact_email`, and `days_to_pay_offset`. The `id` can be used as\n  `client_payee_relationship_id` in other API requests.\n"
+      externalDocs:
+        description: 'API Integration Guides: Mapping and Syncing Companies'
+        url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+      operationId: AxlePayWeb.Api.V1.CompanyController.index (2)
+      parameters:
+      - description: 'Search term matched against the company''s `company_name`, `mc_number`, and `dot_number`.
+
+
+          If omitted or empty, the endpoint returns all eligible companies (companies with
+
+          `status` of `duplicate` or `inactive` are always excluded), ordered by `sort`.
+
+
+          **Normalization applied to both the search term and `company_name` before matching:**
+
+          - Lowercased
+
+          - Punctuation replaced with spaces
+
+          - Consecutive whitespace collapsed to a single space
+
+          - Leading/trailing whitespace trimmed
+
+
+          **Name matching:** The normalized term is split into tokens. All tokens (other than
+
+          trailing business-suffix tokens) must appear in the normalized `company_name` for the
+
+          row to match. Trailing business suffixes — `inc`, `llc`, `corp`, `co`, `ltd`, `ltda`,
+
+          `gmbh`, `plc`, `sa`, `lp`, `llp`, `limited`, `corporation`, `incorporated`, `company` —
+
+          are treated as optional, so `"Acme Corp"` will still match a company named `"Acme Inc"`.
+
+          Single-character tokens (e.g. `"S.A.A."`) are matched as a single phrase.
+
+
+          **MC / DOT matching:** `mc_number` and `dot_number` are matched against the raw search
+
+          term using exact equality (in addition to the name match above), so `"12345678"` will
+
+          match a company whose `mc_number` is exactly `12345678`.
+
+
+          **Multi-strategy fallback:** If the token-based ILIKE search returns no rows, the
+
+          endpoint falls back to a PostgreSQL trigram-similarity search (`similarity > 0.3`),
+
+          and then to a prefix-aware full-text search on `company_name`. This makes the search
+
+          resilient to typos and partial-word queries.
+
+
+          **Exact numeric mode (debtor add-customer flow):** When `company_type=debtor` AND
+
+          `sort=best_match`, a purely numeric search term (whitespace stripped, leading zeros
+
+          ignored) bypasses name search entirely and matches only on exact `mc_number` or
+
+          `dot_number`. At most one row is returned in `data`; `total_results` still reflects
+
+          the true number of matches so the caller can detect MC/DOT collisions.
+
+          '
+        example: ABC Company Inc
+        in: query
+        name: query
+        required: false
+        schema:
+          type: string
+      - description: 'Type of company to sort by. Companies of the matching type are listed first (this is a
+
+          sort, not a filter). When `company_type=debtor`, results are additionally filtered to
+
+          exclude companies flagged as payees (`is_payee=true`), and the numeric-exact MC/DOT
+
+          match described under `query` is enabled when `sort=best_match`.
+
+          '
+        example: debtor
+        in: query
+        name: company_type
+        required: false
+        schema:
+          description: Searchable company types
+          enum:
+          - debtor
+          - payee
+          - factor
+          type: string
+      - description: When `true`, only companies with `status=active` or with an existing (non-deleted) Client-Debtor Relationship for the requesting client are returned. When `false` or omitted, the additional filter is not applied (companies with status `duplicate` and `inactive` are still always excluded).
+        example: true
+        in: query
+        name: active
+        required: false
+        schema:
+          type: boolean
+      - description: 'Sort order for results. Defaults to `company_name` when omitted or empty. See the
+
+          `sort` enum for the full list and ranking semantics. The `best_match` option applies a
+
+          multi-key ranking; see the operation description for details.
+
+
+          For `last_payment_applied_at` and `company_name` sorts, ordering composes as:
+
+          (1) matches of `company_type` first (e.g. with `company_type=debtor`, debtor rows
+
+          sort above non-debtor rows), then (2) rows whose `company_name` starts with the
+
+          trimmed, case-insensitive search term, then (3) the chosen sort field. The
+
+          `best_match` sort uses its own dedicated ranking chain and does not use the prefix
+
+          promotion above.
+
+          '
+        example: best_match
+        in: query
+        name: sort
+        required: false
+        schema:
+          description: "Valid sort parameters for company results.\n\n- `last_payment_applied_at` — sort by most-recent payment received (NULLs last).\n- `company_name` — alphabetical, case-insensitive, ascending.\n- `best_match` — relevance ranking against `query`. When `company_type=debtor` the\n  ORDER BY chain is, in priority order:\n  1. Exact normalized name match.\n  2. Token match count (how many search tokens appear in `company_name`).\n  3. Consecutive token score (how many adjacent token pairs appear together —\n     e.g. `\"American Logistics\"` outranks `\"American Eagle Logistics\"` for the\n     query `\"American Logistics\"`).\n  4. Active status — only applied among exact-name matches; an active company\n     outranks a non-active one with the same normalized name.\n  5. Has any existing (non-deleted) Client-Debtor Relationship for the client.\n  6. CDR popularity — number of distinct clients with a non-deleted CDR for the company.\n  7. Credit limit — `max(debtor.credit_limit, debtor.shared_credit_limit)`. When\n     multiple Client-Debtor Relationships exist, the highest credit amount wins.\n  8. Trigram similarity against `company_name` (fuzzy fallback).\n  9. Company `id` ascending (stable tiebreaker).\n\n  For non-debtor `company_type` (or when `company_type` is omitted) the chain is\n  token count → consecutive score → trigram similarity → `id` ascending.\n"
+          enum:
+          - last_payment_applied_at
+          - company_name
+          - best_match
+          type: string
+      - description: The page of results to query.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+      - description: The number of entities per page of results.
+        example: 10
+        in: query
+        name: per_page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company Index Response'
+          description: Company response
+      security:
+      - api_key: []
+      summary: Search for Companies
+      tags:
+      - Companies
+  /api/v1/companies/factors:
+    get:
+      callbacks: {}
+      description: Returns a list of all Factoring companies established in Denim's database. Return structure is similar to paginated results, however this will always return all factoring companies in 1 page.
+      externalDocs:
+        description: 'API Integration Guides: Mapping and Syncing Companies'
+        url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+      operationId: AxlePayWeb.Api.V1.FactoringCompanyController.index
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Factoring Company Index Response'
+          description: Factoring company response
+      security:
+      - api_key: []
+      summary: List Factoring Companies
+      tags:
+      - Companies
+components:
+  schemas:
+    Debtor:
+      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+      properties:
+        credit_limit:
+          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
+          nullable: true
+          type: integer
+        credit_used:
+          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
+          nullable: true
+          type: integer
+        net_terms:
+          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
+          nullable: true
+          type: integer
+      title: Debtor
+      type: object
+    Client-Payee Relationship:
+      description: Included only if there is an existing non-deleted Client-Payee Relationship for the requesting client.
+      properties:
+        contact_email:
+          description: Contact email at the payee company.
+          type: string
+        days_to_pay_offset:
+          description: Per-relationship offset (in days) added to the payee's standard pay terms.
+          nullable: true
+          type: integer
+        id:
+          description: usable as `client_payee_relationship_id`
+          type: integer
+      title: Client-Payee Relationship
+      type: object
+    Payee:
+      description: Payee Company Information
+      properties:
+        factor_company_name:
+          description: Name of the payee's factoring company, if they have one
+          type: string
+        id:
+          description: Payee ID
+          type: integer
+      title: Payee
+      type: object
+    Generic Company:
+      description: A generic company
+      properties:
+        city:
+          description: City
+          type: string
+        company_name:
+          description: Company name
+          type: string
+        dot_number:
+          description: DOT Number (Department of Transportation Number)
+          nullable: true
+          type: string
+        ein:
+          description: Federal EIN / Tax ID (9 digits)
+          nullable: true
+          type: string
+        id:
+          description: Company ID
+          type: integer
+        is_debtor:
+          description: Whether this company is a debtor type
+          nullable: true
+          type: boolean
+        is_factor:
+          description: Whether this company is a factor type
+          nullable: true
+          type: boolean
+        is_payee:
+          description: Whether this company is a payee type
+          nullable: true
+          type: boolean
+        last_payment_applied_at:
+          description: Timestamp of the most recent payment received from this company. For customer (debtor) search, this is the company's 'last paid date'. `null` if the company has never paid.
+          example: '2024-03-20T10:00:00Z'
+          format: datetime
+          nullable: true
+          type: string
+        mc_number:
+          description: FMCSA Motor Carrier Number (6-8 digits)
+          nullable: true
+          type: string
+        progress:
+          description: Company setup progress
+          enum:
+          - initial
+          - setup_started
+          - onboarding_started
+          - done
+          type: string
+        state:
+          description: State (2 Character Abbreviation)
+          type: string
+        status:
+          description: Company status. The search endpoint always excludes companies with status `duplicate` or `inactive`, so only the values listed below appear in search results.
+          enum:
+          - pending
+          - under_review
+          - active
+          - declined
+          type: string
+      title: Generic Company
+      type: object
+    Company Index Response:
+      description: Response schema for fetching companies
+      example:
+        data:
+        - client_debtor_relationship:
+            default_job_is_factored: true
+            id: 684
+            net_terms: 30
+            noa_status: pending_delivery
+            status: approved
+          company:
+            city: New York
+            company_name: Example Company with Exisiting Client-Debtor Relationship and Credit Limit
+            dot_number: null
+            ein: '123456789'
+            id: 1328
+            is_debtor: true
+            is_factor: null
+            is_payee: null
+            last_payment_applied_at: '2024-03-15T14:30:00Z'
+            mc_number: null
+            progress: initial
+            state: NY
+            status: active
+          debtor:
+            credit_limit: 5000000
+            net_terms: 30
+        - client_payee_relationship:
+            contact_email: tom@tomslogistics.com
+            days_to_pay_offset: 0
+            id: 606
+          company:
+            city: New York
+            company_name: Example Company with Exisiting Client-Payee Relationship and Factor
+            dot_number: '9876543'
+            ein: '123456789'
+            id: 1331
+            is_debtor: null
+            is_factor: null
+            is_payee: true
+            last_payment_applied_at: null
+            mc_number: '12345678'
+            progress: done
+            state: NY
+            status: active
+          payee:
+            factor_company_name: Lindsey Becker LLC
+        - company:
+            city: Omaha
+            company_name: Flowers and Valentine LLC
+            dot_number: '1122334'
+            ein: '123456789'
+            id: 20
+            is_debtor: null
+            is_factor: null
+            is_payee: null
+            last_payment_applied_at: null
+            mc_number: '12345678'
+            progress: done
+            state: NE
+            status: active
+        page: 1
+        per_page: 10
+        total_pages: 1
+        total_results: 3
+      properties:
+        data:
+          items:
+            properties:
+              client_debtor_relationship:
+                $ref: '#/components/schemas/Client-Debtor Relationship'
+              client_payee_relationship:
+                $ref: '#/components/schemas/Client-Payee Relationship'
+              company:
+                $ref: '#/components/schemas/Generic Company'
+              debtor:
+                $ref: '#/components/schemas/Debtor'
+              payee:
+                $ref: '#/components/schemas/Payee'
+            type: object
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Company Index Response
+      type: object
+    Client-Debtor Relationship:
+      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
+      properties:
+        average_dbt_past_60_days:
+          description: Average Days Beyond Terms
+          nullable: true
+          type: number
+        average_dso_past_60_days:
+          description: Average Days Sales Outstanding (DSO) in the past 60 days
+          nullable: true
+          type: number
+        default_job_is_factored:
+          description: Whether new jobs for this debtor default to factored funding.
+          nullable: true
+          type: boolean
+        id:
+          description: usable as `client_debtor_relationship_id`
+          type: integer
+        net_terms:
+          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
+          nullable: true
+          type: integer
+        noa_status:
+          description: Notice-of-Assignment status for the relationship.
+          enum:
+          - pending_delivery
+          - delivered
+          - viewed
+          - confirmed
+          type: string
+        status:
+          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
+          enum:
+          - pending
+          - approved
+          - rejected
+          type: string
+      title: Client-Debtor Relationship
+      type: object
+    Factoring Company:
+      description: A factoring company
+      properties:
+        city:
+          description: City
+          type: string
+        company_name:
+          description: Company name
+          type: string
+        ein:
+          description: Federal EIN / Tax ID (9 digits)
+          nullable: true
+          type: string
+        id:
+          description: Company ID
+          type: integer
+        state:
+          description: State (2 Character Abbreviation)
+          type: string
+      title: Factoring Company
+      type: object
+    Factoring Company Index Response:
+      description: Response schema for fetching factoring companies
+      example:
+        data:
+        - company:
+            city: Atlanta
+            company_name: Best Trucking Company
+            ein: '123456789'
+            id: 35
+            state: GA
+        - company:
+            city: Chicago
+            company_name: Boyds Logistics
+            ein: '123456789'
+            id: 36
+            state: IL
+        - company:
+            city: Louisville
+            company_name: TLD Logistics Inc
+            ein: '123456789'
+            id: 37
+            state: KY
+        page: 1
+        per_page: 3
+        total_pages: 1
+        total_results: 3
+      properties:
+        data:
+          items:
+            properties:
+              company:
+                $ref: '#/components/schemas/Factoring Company'
+            type: object
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Factoring Company Index Response
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: x-api-key
+      type: apiKey
+externalDocs:
+  description: API Integration Guides
+  url: https://help.denim.com/hc/en-us/sections/9403805442843-API-Integration-Guides

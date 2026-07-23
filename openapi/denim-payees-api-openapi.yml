@@ -1,0 +1,531 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: engineering@denim.com
+    name: Denim Engineering Team
+    url: https://www.denim.com
+  description: The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.
+  title: Denim Public API Reference Documentation Companies Payees API
+  version: 1.0.0
+  x-logo:
+    altText: Denim
+    backgroundColor: '#f5f5f5'
+    url: https://app.denim.com/images/branding/denim-logo-color.png
+servers:
+- description: Staging Environment
+  url: https://staging.denim.com
+  variables: {}
+security:
+- api_key: []
+tags:
+- description: A payee is your contractor or carrier. They are the entity that needs to be paid for services. Payees are a type of Company in our ecosystem and are associated to our shared client through Client-Payee Relationships.
+  externalDocs:
+    description: 'Guides: Companies'
+    url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+  name: Payees
+paths:
+  /api/v1/payee-relationships:
+    get:
+      callbacks: {}
+      description: This retrieves the payees that your company has a relationship with.
+      externalDocs:
+        description: 'API Integration Guides: Mapping and Syncing Companies'
+        url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+      operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.index (2)
+      parameters:
+      - description: Search string for payee company name or MC Number.
+        example: Best Carrier LLC
+        in: query
+        name: query
+        required: false
+        schema:
+          type: string
+      - description: "Payee Relationship Filters.\n\n- status\n- days to pay offset\n- quick pay rate\n    - Note: `quick_pay_rate` is in basis points (ex: 100 bps == %1.00)\",\n"
+        example:
+          days_to_pay_offset: 5
+          quick_pay_rate: 100
+          status: pending
+        in: query
+        name: filters
+        required: false
+        schema:
+          description: Available filters for fetching Payees
+          example:
+            status: pending
+          properties:
+            days_to_pay_offset:
+              description: Payee relationship days to pay offset
+              type: integer
+            has_elected_payment_terms:
+              description: Filter by whether the payee has elected payment terms
+              type: boolean
+            quick_pay_rate:
+              description: 'Payee relationship quick pay rate, stored in basis points (ex: 100 bps == %1.00)'
+              type: integer
+            status:
+              description: Payee relationship status
+              enum:
+              - pending
+              - approved
+              - rejected
+              type: string
+          title: Payee Relationship Filters
+          type: object
+      - description: Filter for payee payment setting types
+        in: query
+        name: payment_types_filter
+        required: false
+        schema:
+          items:
+            enum:
+            - ach
+            - check
+            - missing
+            type: string
+          type: array
+      - description: The page of results to query.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+      - description: The number of entities per page of results.
+        example: 10
+        in: query
+        name: per_page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payee Index Response'
+          description: Payee relationship response
+      security:
+      - api_key: []
+      summary: List Client-Payee Relationships
+      tags:
+      - Payees
+    post:
+      callbacks: {}
+      description: 'Creates a Client-Payee Relationship. Read the guide below for details. There are several different ways to create payees, whether it includes a factor assignment, etc. Important note: all factor assignments or updates create ''Requests'' in our Request Center and these are all reviewed and approved by our operations team before becoming effective. This review is to ensure the proper payees receive payments and don''t impact other payee setups.
+
+        '
+      externalDocs:
+        description: 'API Integration Guides: Mapping and Syncing Companies'
+        url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
+      operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.create (2)
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            examples:
+              add_new_payee_example_without_factor:
+                description: Invite a new payee (without a factor)
+                summary: Add a new payee without a factor
+                value:
+                  client_payee_relationship:
+                    contact_email: tom@tomslogistics.com
+                    contact_first_name: Tom
+                    contact_last_name: Brogan
+                    contact_phone_number: 1 123 123 3434
+                    days_to_pay_offset: 4
+                  company:
+                    city: New York
+                    company_name: New Carrier LLC
+                    country: USA
+                    ein: '123456789'
+                    mc_number: '12345678'
+                    state: NY
+                    website: www.newcompany.com
+              add_new_payee_with_factor_example:
+                description: Invite a new payee with a factor
+                summary: Add a new payee with a pre-existing factor
+                value:
+                  company:
+                    city: New York
+                    company_name: New Carrrier LLC
+                    country: USA
+                    ein: '123456789'
+                    mc_number: '12345678'
+                    state: NY
+                    website: www.newcompany.com
+                  payee:
+                    days_to_pay_offset: 3
+                    factor_company_id: 34
+              add_new_payee_with_new_factor_example:
+                description: Invite a new payee with a new factor not in the system
+                summary: Add a new payee with a new factor
+                value:
+                  company:
+                    city: New York
+                    company_name: New Carrrier LLC
+                    country: USA
+                    ein: '123456789'
+                    mc_number: '12345678'
+                    state: NY
+                    website: www.newcompany.com
+                  payee:
+                    days_to_pay_offset: 3
+                    factor_company_id: 0
+              existing_payee_example_without_factor:
+                description: Add a relationship with an existing payee direct (without a factor)
+                summary: Link existing payee without a factor
+                value:
+                  client_payee_relationship:
+                    contact_email: tom@tomslogistics.com
+                    contact_first_name: Tom
+                    contact_last_name: Brogan
+                    contact_phone_number: 1 123 123 3434
+                    days_to_pay_offset: 4
+                  company_id: 123
+              existing_payee_with_factor_example:
+                description: Add a relationship with an existing payee with factoring relationship already setup
+                summary: Link existing payee with a pre-existing factor relationship
+                value:
+                  company_id: 123
+              existing_payee_with_new_factor_example:
+                description: Add a relationship with an existing payee and set a new factor not in the system. New factor requests are reviewed by our operations team.
+                summary: Link existing payee and set a new factor
+                value:
+                  company_id: 123
+                  payee:
+                    days_to_pay_offset: 4
+                    factor_company_id: 0
+            schema:
+              $ref: '#/components/schemas/Payee Create'
+        description: Creating a payee relationship params
+        required: false
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payee Create Response'
+          description: Payee relationship created response
+      security:
+      - api_key: []
+      summary: Create a Client-Payee Relationship
+      tags:
+      - Payees
+  /api/v1/payee-relationships/{client_payee_relationship_id}/update-assign-factor:
+    post:
+      callbacks: {}
+      description: Creates a request to change the factor assigned to the payee. These changes are reviewed by our operations team and the original factor will still be referenced until this request is reviewed and approved.
+      operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor (2)
+      parameters:
+      - description: client_payee_relationship_id
+        example: 543
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            examples:
+              update_with_existing_factor_example:
+                description: Assign an existing factor to an existing payee relationship
+                summary: Update with existing assigned factor
+                value:
+                  payee:
+                    factor_company_id: 34
+              update_with_new_factor_example:
+                description: Assign a new factor to an existing payee relationship
+                summary: Update with new assigned factor
+                value:
+                  payee:
+                    factor_company_id: 0
+            schema:
+              $ref: '#/components/schemas/Update or set assigned factor on an existing payee relationship'
+        description: Update or set the assigned factor on an existing payee relationship
+        required: false
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payee Create Response'
+          description: Update payee relationship assigned factor
+      security:
+      - api_key: []
+      summary: Update a payee's assigned factor
+      tags:
+      - Payees
+components:
+  schemas:
+    Update or set assigned factor on an existing payee relationship:
+      description: Allows setting or changing the assigned factor on an existing payee relationship.
+      example:
+        payee:
+          factor_company_id: 34
+      properties:
+        payee:
+          $ref: '#/components/schemas/Payee Factor Company'
+      required:
+      - payee
+      title: Update or set assigned factor on an existing payee relationship
+      type: object
+    Payee Index Response:
+      description: Response schema for fetching payee relationships
+      example:
+        data:
+        - client_payee_relationship:
+            contact_email: tsmith@gmail.com
+            contact_first_name: Thomas
+            contact_last_name: Smith
+            contact_phone_number: +1 (234) 234 - 5344
+            id: 74
+            payment_setting:
+              account_name: Joe's Factoring LLC
+              account_number: X8508
+              address_line_1: null
+              address_line_2: null
+              city: null
+              country: null
+              method: ach
+              state: null
+              to_factor: true
+              zip_code: null
+            status: pending
+          company:
+            city: Atlanta
+            company_name: Best Trucking Company
+            ein: '123456789'
+            id: 35
+            mc_number: '12345678'
+            state: GA
+            status: active
+            website: www.besttrucking.com
+          payee:
+            factor_company_name: Joe's Factoring LLC
+            id: 25
+        - client_payee_relationship:
+            contact_email: boydj@gmail.com
+            contact_first_name: Boyd
+            contact_last_name: Johnson
+            contact_phone_number: +1 (675) 544 - 8526
+            id: 544
+            payment_setting:
+              account_name: Boyds Logistics
+              account_number: X8534
+              address_line_1: null
+              address_line_2: null
+              city: null
+              country: null
+              method: ach
+              state: null
+              to_factor: false
+              zip_code: null
+            status: pending
+          company:
+            city: Chicago
+            company_name: Boyds Logistics
+            ein: '123456789'
+            id: 35
+            mc_number: '12345678'
+            state: IL
+            status: active
+            website: null
+          payee:
+            factor_company_name: ''
+            id: 99
+        page: 1
+        per_page: 2
+        total_pages: 3
+        total_results: 2
+      properties:
+        data:
+          items:
+            properties:
+              client_payee_relationship:
+                $ref: '#/components/schemas/Client-Payee Relationship'
+              company:
+                $ref: '#/components/schemas/Payee Company'
+              payee:
+                $ref: '#/components/schemas/Payee'
+            type: object
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Payee Index Response
+      type: object
+    Payee Create Response:
+      description: Response schema for creating a new payee relationship
+      example:
+        data:
+          client_payee_relationship:
+            contact_email: boydj@gmail.com
+            contact_first_name: Boyd
+            contact_last_name: Johnson
+            contact_phone_number: +1 (675) 544 - 8526
+            id: 544
+            payment_setting: null
+            status: pending
+          company:
+            city: New York
+            company_name: Best Trucking Company
+            ein: '123456789'
+            id: 74
+            mc_number: '12345678'
+            progress: initial
+            state: NY
+            status: under_review
+            website: www.besttrucking.com
+          payee:
+            factor_company_name: ''
+            id: 25
+      properties:
+        data:
+          properties:
+            client_payee_relationship:
+              $ref: '#/components/schemas/Client-Payee Relationship'
+            company:
+              $ref: '#/components/schemas/Payee Company'
+            payee:
+              $ref: '#/components/schemas/Payee'
+          type: object
+      title: Payee Create Response
+      type: object
+    Client-Payee Relationship:
+      description: Included only if there is an existing non-deleted Client-Payee Relationship for the requesting client.
+      properties:
+        contact_email:
+          description: Contact email at the payee company.
+          type: string
+        days_to_pay_offset:
+          description: Per-relationship offset (in days) added to the payee's standard pay terms.
+          nullable: true
+          type: integer
+        id:
+          description: usable as `client_payee_relationship_id`
+          type: integer
+      title: Client-Payee Relationship
+      type: object
+    Payee:
+      description: Payee Company Information
+      properties:
+        factor_company_name:
+          description: Name of the payee's factoring company, if they have one
+          type: string
+        id:
+          description: Payee ID
+          type: integer
+      title: Payee
+      type: object
+    Payee Create:
+      description: Use the company search API to find an existing company or send the `company` parameters to create a new company. Either 'payee' (when the payee has factor) or 'client_payee_relationship' (no factor) required when creating payee relationship.
+      example:
+        client_payee_relationship:
+          contact_email: tom@tomslogistics.com
+          contact_first_name: Tom
+          contact_last_name: Brogan
+          contact_phone_number: '11231233434'
+          payment_setting:
+            account_name: New Customer LLC
+            account_number: X8508
+            address_line_1: null
+            address_line_2: null
+            city: null
+            country: null
+            method: ach
+            state: null
+            to_factor: false
+            zip_code: null
+        company:
+          city: New York
+          company_name: New Customer LLC
+          ein: '123456789'
+          mc_number: null
+          state: NY
+          website: www.newcompany.com
+      properties:
+        client_payee_relationship:
+          $ref: '#/components/schemas/Client-Payee Relationship'
+        company:
+          $ref: '#/components/schemas/Payee Company'
+        company_id:
+          description: Company ID. Either 'company_id' (existing company) or 'company' (new company) required when creating payee relationship.
+          type: integer
+        payee:
+          $ref: '#/components/schemas/Payee Factor Company'
+      title: Payee Create
+      type: object
+    Payee Factor Company:
+      description: Set the assigned factor for the payee.
+      properties:
+        factor_company_id:
+          description: Factor company ID. Can be found using the Search Companies endpoint or use '0' for new a factor.
+          type: integer
+      title: Payee Factor Company
+      type: object
+    Payee Company:
+      description: A payee company
+      properties:
+        city:
+          description: City
+          type: string
+        company_name:
+          description: Payee company name
+          type: string
+        country:
+          default: USA
+          description: Country (3 Character Abbreviation)
+          enum:
+          - USA
+          - CAN
+          type: string
+        ein:
+          description: Federal EIN / Tax ID (9 digits)
+          nullable: true
+          type: string
+        id:
+          description: Company ID
+          type: integer
+        mc_number:
+          description: FMCSA Motor Carrier Number (6-8 digits)
+          nullable: true
+          type: string
+        progess:
+          description: Payee setup progress
+          enum:
+          - initial
+          - setup_started
+          - onboarding_started
+          - done
+          type: string
+        state:
+          description: State (2 Character Abbreviation)
+          type: string
+        status:
+          description: Payee status
+          enum:
+          - under_review
+          - active
+          type: string
+      required:
+      - company_name
+      title: Payee Company
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: x-api-key
+      type: apiKey
+externalDocs:
+  description: API Integration Guides
+  url: https://help.denim.com/hc/en-us/sections/9403805442843-API-Integration-Guides

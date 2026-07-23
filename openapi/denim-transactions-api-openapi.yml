@@ -1,0 +1,309 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: engineering@denim.com
+    name: Denim Engineering Team
+    url: https://www.denim.com
+  description: The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.
+  title: Denim Public API Reference Documentation Companies Transactions API
+  version: 1.0.0
+  x-logo:
+    altText: Denim
+    backgroundColor: '#f5f5f5'
+    url: https://app.denim.com/images/branding/denim-logo-color.png
+servers:
+- description: Staging Environment
+  url: https://staging.denim.com
+  variables: {}
+security:
+- api_key: []
+tags:
+- description: Transactions are payments incoming, outgoing, netting, and adjustments. Transactions are are generally applied towards obligations.
+  externalDocs:
+    description: 'Guides: Working with Job Data'
+    url: https://help.denim.com/hc/en-us/articles/9403905739035-6-Working-with-Job-Data
+  name: Transactions
+paths:
+  /api/v1/transactions:
+    get:
+      callbacks: {}
+      description: Transactions are payments incoming, outgoing, netting, and adjustments. Transactions are are generally applied towards obligations.
+      externalDocs:
+        description: 'API Integration Guides: Working with Job Data'
+        url: https://help.denim.com/hc/en-us/articles/9403905739035-6-Working-with-Job-Data
+      operationId: AxlePayWeb.Api.V1.TransactionController.index (2)
+      parameters:
+      - description: Search by company name, amount, reference, or description
+        example: $1,000.00
+        in: query
+        name: query
+        required: false
+        schema:
+          type: string
+      - description: Filter transactions after date in YYYY-MM-DD format
+        example: '2020-12-25'
+        in: query
+        name: start_date
+        required: false
+        schema:
+          type: string
+      - description: Filter transactions before date in YYYY-MM-DD format
+        example: '2021-01-31'
+        in: query
+        name: end_date
+        required: false
+        schema:
+          type: string
+      - description: Enum type to help filter payments by who made them. One of [all, payee, debtor, client].
+        example: payee
+        in: query
+        name: transaction_owner
+        required: false
+        schema:
+          type: string
+      - description: The page of results to query.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+      - description: The number of entities per page of results.
+        example: 10
+        in: query
+        name: per_page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction Index Response'
+          description: Transaction response
+      security:
+      - api_key: []
+      summary: List Transactions
+      tags:
+      - Transactions
+components:
+  schemas:
+    Transaction:
+      description: A transaction and how it was applied.
+      properties:
+        applied_transactions:
+          items:
+            $ref: '#/components/schemas/Transaction Applied'
+          type: array
+        company_id:
+          description: Company ID
+          type: integer
+        company_name:
+          description: Company name
+          type: string
+        description:
+          description: Memo or description
+          type: string
+        method:
+          description: How the transaction was sent
+          enum:
+          - ach
+          - check
+          - not_applicable
+          type: string
+        reference_number:
+          description: Check number or ACH batch number
+          type: string
+        total_amount:
+          description: Total transaction amount in cents
+          type: integer
+        transaction_date:
+          description: Datetime of the transaction in ISO format
+          type: string
+        transaction_metadata:
+          $ref: '#/components/schemas/Transaction Metadata'
+        type:
+          description: Whether funds were sent out or received
+          enum:
+          - incoming
+          - outgoing
+          - netting
+          - adjustment
+          type: string
+        uuid:
+          description: Unique identifier for the transaction in UUID4 format
+          type: string
+        version:
+          description: Version of the transaction (increments if the transacion gets updated)
+          type: integer
+      title: Transaction
+      type: object
+    Payment Details:
+      description: Details about how a payment was made.
+      properties:
+        account_name:
+          description: Account name.
+          type: string
+        account_number:
+          description: Masked account number (e.g. X1234).
+          nullable: true
+          type: string
+        address_line_1:
+          description: Address Line 1
+          nullable: true
+          type: string
+        address_line_2:
+          description: Address Line 2
+          nullable: true
+          type: string
+        city:
+          description: City
+          nullable: true
+          type: string
+        country:
+          description: Country
+          nullable: true
+          type: string
+        state:
+          description: State
+          nullable: true
+          type: string
+        zip_code:
+          description: Zip Code
+          nullable: true
+          type: string
+      title: Payment Details
+      type: object
+    Transaction Index Response:
+      description: Response schema for fetching transactions
+      example:
+        data:
+        - applied_transactions:
+          - amount_due: 0
+            applied_amount: 100000
+            company_name: Shipper Co
+            job_number: test-scheduled-2
+            payment_status: fully_paid
+            subtype: primary
+            total_amount: 100000
+            type: receivable
+          company_id: 44
+          company_name: Shipper Co
+          description: payment from shipper
+          method: ach
+          reference_number: '123'
+          total_amount: 100000
+          transaction_date: '2020-10-15T16:00:00Z'
+          transaction_metadata:
+            payment_details:
+              account_name: Shipper Co
+              account_number: X1234
+              address_line_1: null
+              address_line_2: null
+              city: null
+              country: null
+              state: null
+              zip_code: null
+            payment_type: bank
+            to_factor: false
+            transfer_method: ach
+          type: incoming
+          uuid: 6b7e349e-ff53-42ec-8e99-47f1cb3aeea0
+          version: 0
+        page: 1
+        per_page: 2
+        total_pages: 3
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Transaction'
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Transaction Index Response
+      type: object
+    Transaction Metadata:
+      description: Metadata information about a transaction.
+      nullable: true
+      properties:
+        payment_details:
+          $ref: '#/components/schemas/Payment Details'
+        payment_type:
+          description: How the transaction was sent.
+          enum:
+          - bank
+          - check
+          type: string
+        to_factor:
+          description: Whether the transaction was sent to a factor.
+          type: boolean
+        transfer_method:
+          description: How the bank transaction was sent.
+          enum:
+          - ach
+          - wire
+          nullable: true
+          type: string
+      title: Transaction Metadata
+      type: object
+    Transaction Applied:
+      description: Transaction applied to obligations
+      properties:
+        amount_due:
+          description: Amount due on the obligation in cents
+          type: integer
+        applied_amount:
+          description: Amount of the transaction applied to this obligation in cents
+          type: integer
+        company_name:
+          description: Company name of the obligation
+          type: string
+        job_number:
+          description: Job reference number
+          type: string
+        payment_status:
+          description: Payment status of the obligation
+          enum:
+          - fully_paid
+          - overpaid
+          - underpaid
+          - expected
+          - scheduled
+          type: string
+        subtype:
+          description: Subtype of the obligation
+          enum:
+          - primary
+          - advance
+          - rebate
+          type: string
+        total_amount:
+          description: Total amount of the obligation in cents
+          type: integer
+        type:
+          description: Type of the obligation
+          enum:
+          - receivable
+          - payable
+          type: string
+      title: Transaction Applied
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: x-api-key
+      type: apiKey
+externalDocs:
+  description: API Integration Guides
+  url: https://help.denim.com/hc/en-us/sections/9403805442843-API-Integration-Guides

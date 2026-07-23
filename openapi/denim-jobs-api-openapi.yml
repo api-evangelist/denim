@@ -1,0 +1,1306 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: engineering@denim.com
+    name: Denim Engineering Team
+    url: https://www.denim.com
+  description: The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.
+  title: Denim Public API Reference Documentation Companies Jobs API
+  version: 1.0.0
+  x-logo:
+    altText: Denim
+    backgroundColor: '#f5f5f5'
+    url: https://app.denim.com/images/branding/denim-logo-color.png
+servers:
+- description: Staging Environment
+  url: https://staging.denim.com
+  variables: {}
+security:
+- api_key: []
+tags:
+- description: A job is a collection of obligations (payables, receivables, and fees) associated with an invoice or purchase order.
+  externalDocs:
+    description: 'Guides: Adding Jobs'
+    url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+  name: Jobs
+paths:
+  /api/v1/jobs:
+    get:
+      callbacks: {}
+      description: A job is a collection of payables, receivables, and fees (obligations) associated with an invoice or purchase order.
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.index (2)
+      parameters:
+      - description: Search by company name, amount, or job number
+        example: $1,000.00
+        in: query
+        name: query
+        required: false
+        schema:
+          type: string
+      - description: Job statuses
+        example: approved
+        in: query
+        name: status
+        required: false
+        schema:
+          description: Job statuses
+          enum:
+          - draft
+          - pending
+          - approved
+          - rejected
+          - completed
+          - all_active
+          - all_inactive
+          example: approved
+          title: Job Status
+          type: string
+      - description: 'When true, return only jobs that need attention: manual/admin flag OR actionable document-audit issue.'
+        in: query
+        name: needs_attention
+        required: false
+        schema:
+          type: boolean
+      - description: The page of results to query.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+      - description: The number of entities per page of results.
+        example: 10
+        in: query
+        name: per_page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Index Response'
+          description: Jobs index response
+      security:
+      - api_key: []
+      summary: List Jobs
+      tags:
+      - Jobs
+    post:
+      callbacks: {}
+      description: Create a new Job.
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.create (2)
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job Create Request'
+        description: Job create request
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Create Response'
+          description: New Job
+      security:
+      - api_key: []
+      summary: Create a Job
+      tags:
+      - Jobs
+  /api/v1/jobs/quote:
+    post:
+      callbacks: {}
+      description: Get a factoring fee quote for a Job.
+      externalDocs:
+        description: 'API Integration Guides: Job Quote'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.get_quote
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job Quote Request'
+        description: Job Quote Request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Quote Response'
+          description: Job Quote Response
+      security:
+      - api_key: []
+      summary: Get Job Quote
+      tags:
+      - Jobs
+  /api/v1/jobs/{id}:
+    delete:
+      callbacks: {}
+      description: Deletes a Job in Pending or Draft status.
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.delete (2)
+      parameters:
+      - description: Job UUID
+        example: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Delete Response'
+          description: Deleted Job
+      security:
+      - api_key: []
+      summary: Delete a Job
+      tags:
+      - Jobs
+    get:
+      callbacks: {}
+      description: This retrieves a single job by UUID
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.show (2)
+      parameters:
+      - description: Job UUID
+        example: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Show Response'
+          description: Single Job response
+      security:
+      - api_key: []
+      summary: Get a single Job Record
+      tags:
+      - Jobs
+  /api/v1/jobs/{job_id}/documents:
+    post:
+      callbacks: {}
+      deprecated: false
+      description: 'This endpoint enables adding documents to existing jobs.
+
+
+        This can accept either a json body with a publicly accessible `url`, `type` and `subtype`, or a multi-part form body including a `file` as the binary and `type` and `subtype`. In either case, the document will be uploaded and stored to our secure Google Cloud Platform storage.
+
+        '
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: Elixir.AxlePayWeb.Api.V1.Job.DocumentController.create
+      parameters:
+      - description: Job UUID
+        example: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+        in: path
+        name: job_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              subtype: invoice
+              type: billing_paperwork
+              url: https://example.com/samples/sample_files/sample_document.pdf
+            schema:
+              $ref: '#/components/schemas/Add a document to a job'
+          multipart/form-data:
+            example:
+              file: ''
+              subtype: invoice
+              type: billing_paperwork
+            schema:
+              $ref: '#/components/schemas/Upload a document to a job'
+        description: Upload document request body
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Document'
+          description: Upload document response
+      summary: Create Job Document
+      tags:
+      - Jobs
+  /api/v1/jobs/{job_id}/revert-to-draft:
+    post:
+      callbacks: {}
+      description: Reverts a pending Job back to a draft status.
+      externalDocs:
+        description: 'API Integration Guides: Adding Jobs'
+        url: https://help.denim.com/hc/en-us/articles/9403903798811-5-Adding-Jobs
+      operationId: AxlePayWeb.Api.V1.JobController.revert_to_draft (2)
+      parameters:
+      - description: Job UUID
+        example: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+        in: path
+        name: job_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job Show Response'
+          description: Updated Job Record
+      security:
+      - api_key: []
+      summary: Revert Job to Draft
+      tags:
+      - Jobs
+components:
+  schemas:
+    Job Quote Response:
+      description: Response for getting a job quote
+      example:
+        data:
+          factoring_fee: 3000
+          valid_until: '2021-07-06T15:59:59Z'
+      properties:
+        data:
+          description: Factoring fee and with validity cutoff time.
+          properties:
+            factoring_fee:
+              description: Total factoring cost for the job in cents
+              type: integer
+            valid_until:
+              description: UTC time of when the quote is valid until.
+              type: string
+          type: object
+      title: Job Quote Response
+      type: object
+    Job Index Response:
+      description: Response schema for fetching jobs
+      example:
+        data:
+        - actionable_doc_audit_issue_count: 0
+          client_id: 2
+          company_id: 3
+          documents:
+          - file_name: 1582558423630_a5993a13c2_embedded_jpeg_pdf.pdf
+            inserted_at: '2020-02-24T15:33:46'
+            type: billing_paperwork
+            url: https://link-to-gcp-file.gcp.com
+            uuid: 3227bb84-6735-48c1-b8ea-4e7d09d1e07d
+          is_approved: true
+          is_rejected: false
+          is_validated: true
+          is_verified: true
+          manual_needs_attention: false
+          needs_attention: false
+          notes: There was a lumper fee
+          obligations:
+          - amount_due: 10000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_days_to_pay_offset: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-02-26T15:34:22Z'
+            latest_entry: null
+            payment_status: scheduled
+            reference_number: ''
+            status: approved
+            subtype: advance
+            total_amount: 10000
+            type: payable
+          - amount_due: 80000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_days_to_pay_offset: 3
+            client_payee_relationship_id: 21
+            company_id: 45
+            company_name: Carrier LLC
+            discounted_days: 0
+            due_date: '2020-02-26T15:34:22Z'
+            latest_entry: null
+            payment_status: scheduled
+            reference_number: ''
+            status: approved
+            subtype: advance
+            total_amount: 80000
+            type: payable
+            uuid: a5558b9f-21d1-44b3-ad35-d642c9dc9b4d
+          - amount_due: 2000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_days_to_pay_offset: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            latest_entry: null
+            payment_status: expected
+            reference_number: ''
+            status: approved
+            subtype: factoring_fee
+            total_amount: 3000
+            type: earnings
+            uuid: 580a94ca-0920-4fd3-aac7-aad144b57995
+          - amount_due: 7000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_days_to_pay_offset: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            latest_entry:
+              inserted_at: '2020-03-24T04:00:00Z'
+              type: rebate_auto_giveback
+              uuid: 0a212a02-1623-4ea8-811c-db3da8e90f12
+            payment_status: expected
+            reference_number: ''
+            status: approved
+            subtype: rebate
+            total_amount: 7000
+            type: payable
+            uuid: 740ecc52-77f5-461d-b7dd-a30266dbc8d0
+          - amount_due: 100000
+            applied_amount: 0
+            client_debtor_relationship_id: 30
+            client_payee_relationship_days_to_pay_offset: null
+            client_payee_relationship_id: null
+            company_id: 116
+            company_name: New Debtor
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            latest_entry:
+              inserted_at: '2020-03-24T04:00:00Z'
+              type: payment_applied_to_obligation
+              uuid: 0a212a02-1623-4ea8-811c-db3da8e90f12
+            line_items:
+            - amount: 89000
+              description: Invoice Price
+              type: base_amount
+            - amount: 9000
+              description: Lumper Fee
+              type: accessorial_fee
+            - amount: 2000
+              description: Fuel Surcharge
+              type: accessorial_fee
+            payment_status: expected
+            reference_number: ''
+            status: approved
+            subtype: primary
+            total_amount: 100000
+            type: receivable
+            uuid: a5c3a55e-a58a-40a0-9408-6cfbc89f7441
+          reference_number: test-123
+          status: approved
+          status_message: This job is approved
+          uuid: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+        page: 1
+        per_page: 2
+        total_pages: 3
+        total_result: 1
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Job'
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_result:
+          description: Total number of results
+          type: integer
+      title: Job Index Response
+      type: object
+    Job Delete Response:
+      description: Response schema for deleting a job
+      example:
+        data:
+          job_uuid: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+      properties:
+        data:
+          description: Job uuid only
+          properties:
+            job_uuid:
+              description: Unique identifier for the job in UUID4 format
+              type: string
+          type: object
+      title: Job Delete Response
+      type: object
+    Job Document:
+      description: Associated documents for the job. Optional
+      properties:
+        subtype:
+          description: Billing or supporting paperwork subtype. Optional
+          enum:
+          - purchase_order
+          - proof_of_work
+          - invoice
+          nullable: true
+          type: string
+        type:
+          description: Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier.
+          enum:
+          - billing_paperwork
+          - supporting_paperwork
+          type: string
+        url:
+          description: 'Full remote URL of document file to be uploaded. Content-Type header is required in response. Allowed Content-Type values: application/pdf, image/png and image/jpeg.'
+          type: string
+      title: Job Document
+      type: object
+    Job Show Response:
+      description: Response schema for fetching jobs
+      example:
+        data:
+          actionable_doc_audit_issue_count: 0
+          client_id: 2
+          company_id: 3
+          documents:
+          - file_name: 1582558423630_a5993a13c2_embedded_jpeg_pdf.pdf
+            inserted_at: '2020-02-24T15:33:46'
+            type: billing_paperwork
+            url: https://link-to-gcp-file.gcp.com
+            uuid: 3227bb84-6735-48c1-b8ea-4e7d09d1e07d
+          is_approved: true
+          is_rejected: false
+          is_validated: true
+          is_verified: true
+          manual_needs_attention: false
+          needs_attention: false
+          notes: There was a lumper fee
+          obligations:
+          - amount_due: 10000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-02-26T15:34:22Z'
+            payment_details: {}
+            payment_status: scheduled
+            reference_number: ''
+            status: approved
+            subtype: advance
+            total_amount: 10000
+            type: payable
+          - amount_due: 80000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_id: 21
+            company_id: 45
+            company_name: Carrier LLC
+            discounted_days: 0
+            due_date: '2020-02-26T15:34:22Z'
+            payment_details: {}
+            payment_status: scheduled
+            reference_number: ''
+            status: approved
+            subtype: advance
+            total_amount: 80000
+            type: payable
+            uuid: a5558b9f-21d1-44b3-ad35-d642c9dc9b4d
+          - amount_due: 2000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            payment_details: {}
+            payment_status: expected
+            reference_number: ''
+            status: approved
+            subtype: factoring_fee
+            total_amount: 3000
+            type: earnings
+            uuid: 580a94ca-0920-4fd3-aac7-aad144b57995
+          - amount_due: 7000
+            applied_amount: 0
+            client_debtor_relationship_id: null
+            client_payee_relationship_id: null
+            company_id: 2
+            company_name: Denim Logistics
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            payment_details: {}
+            payment_status: expected
+            reference_number: ''
+            status: approved
+            subtype: rebate
+            total_amount: 7000
+            type: payable
+            uuid: 740ecc52-77f5-461d-b7dd-a30266dbc8d0
+          - amount_due: 100000
+            applied_amount: 0
+            client_debtor_relationship_id: 30
+            client_payee_relationship_id: null
+            company_id: 116
+            company_name: New Debtor
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            line_items:
+            - amount: 89000
+              description: Invoice Price
+              type: base_amount
+            - amount: 9000
+              description: Lumper Fee
+              type: accessorial_fee
+            - amount: 2000
+              description: Fuel Surcharge
+              type: accessorial_fee
+            payment_details:
+              account_name: Bank Account Name
+              account_number: X7890
+              account_type: checking
+            payment_status: fully_paid
+            reference_number: ''
+            status: approved
+            subtype: primary
+            total_amount: 100000
+            type: receivable
+            uuid: a5c3a55e-a58a-40a0-9408-6cfbc89f7441
+          reference_number: test-123
+          status: approved
+          status_message: This job is approved
+          uuid: 06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6
+      properties:
+        data:
+          $ref: '#/components/schemas/Job'
+      title: Job Show Response
+      type: object
+    Upload a document to a job:
+      description: Upload a PDF, PNG, or JPEG documents associated with a job. Files will be uploaded to our secure file storage.
+      properties:
+        file:
+          description: Multi-part file upload of document.
+          format: binary
+          type: string
+        subtype:
+          description: Billing or supporting paperwork subtype. Optional
+          enum:
+          - purchase_order
+          - proof_of_work
+          - invoice
+          nullable: true
+          type: string
+        type:
+          description: Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier.
+          enum:
+          - billing_paperwork
+          - supporting_paperwork
+          type: string
+      title: Upload a document to a job
+      type: object
+    Job Create Response:
+      description: Response for creating a job
+      example:
+        data:
+          company_id: 784
+          documents:
+          - subtype: proof_of_work
+            type: billing_paperwork
+            url: https://example.com/samples/sample_files/sample_document.pdf
+          - subtype: invoice
+            type: supporting_paperwork
+            url: https://example.com/samples/sample_files/sample_document.pdf
+          is_factored: true
+          obligations:
+          - client_debtor_relationship_id: null
+            client_payee_relationship_id: 21
+            company_id: 45
+            discounted_days: 0
+            due_date: '2020-02-26T15:34:22Z'
+            obligation_date: '2020-01-26T15:34:22Z'
+            reference_number: ''
+            subtype: primary
+            total_amount: 80000
+            type: payable
+          - client_debtor_relationship_id: 30
+            client_payee_relationship_id: null
+            company_id: 116
+            discounted_days: 0
+            due_date: '2020-03-26T04:00:00Z'
+            line_items:
+            - amount: 89000
+              description: Invoice Price
+              type: base_amount
+            - amount: 9000
+              description: Lumper Fee
+              type: accessorial_fee
+            - amount: 2000
+              description: Fuel Surcharge
+              type: accessorial_fee
+            obligation_date: '2020-02-26T04:00:00Z'
+            reference_number: ''
+            subtype: primary
+            total_amount: 100000
+            type: receivable
+          reference_number: test-123
+          status: pending
+          status_message: null
+          uuid: 3227bb84-6735-48c1-b8ea-4e7d09d1e07d
+      properties:
+        data:
+          properties:
+            company_id:
+              description: Company ID
+              type: integer
+            documents:
+              items:
+                $ref: '#/components/schemas/Job Document'
+              type: array
+            is_factored:
+              description: Whether job should be factored or not.
+              type: boolean
+            obligations:
+              items:
+                description: Payables, Receivables, and Denim's Fees for a job
+                properties:
+                  allocated_payables:
+                    description: '[Not yet implemented] For receivable-only jobs, tracks the payables associated to the receivable. In particular for LTL shipments, this enables a receivable-only job to be associated with previous payable obligations.'
+                    example: []
+                    items:
+                      properties:
+                        allocated_cost:
+                          description: Allocated cost in cents.
+                          type: number
+                        allocated_revenue:
+                          description: Allocated revenue in cents
+                          type: number
+                        payable_reference_number:
+                          description: Payable reference number
+                          required: true
+                          type: string
+                      type: object
+                    type: array
+                  allocated_receivables:
+                    description: '[Not yet implemented] For payable-only jobs, tracks the receivables associated to the payable. In particular for LTL shipments, this enables a payable-only job to be associated with a future receivable obligation.'
+                    example: []
+                    items:
+                      properties:
+                        allocated_cost:
+                          description: Allocated cost in cents.
+                          type: number
+                        allocated_revenue:
+                          description: Allocated revenue in cents
+                          type: number
+                        receivable_reference_number:
+                          description: Receivable reference number
+                          required: true
+                          type: string
+                      type: object
+                    type: array
+                  client_debtor_relationship_id:
+                    description: Client debtor relationship ID for the receivable obligation
+                    nullable: true
+                    type: integer
+                  client_payee_relationship_id:
+                    description: Client payee relationship ID for the payable obligation
+                    nullable: true
+                    type: integer
+                  company_id:
+                    description: Company ID for the obligation
+                    type: integer
+                  discounted_days:
+                    description: Number of days factoring was delayed for a discount
+                    type: integer
+                  due_date:
+                    description: Date obligation is due in ISO format. The due_date should be within -60 and +120 days of the current datetime.
+                    type: string
+                  line_items:
+                    description: "  Line Items associated with the obligation. Two requirements:\n  1. base_amount line item must be provided, the rest should be accessorial_fee\n  1. The sum of all line item amounts must add up to the total_amount of the receivable obligation\n"
+                    example:
+                    - amount: 89000
+                      description: Invoice Price
+                      type: base_amount
+                    - amount: 9000
+                      description: Lumper Fee
+                      type: accessorial_fee
+                    - amount: 2000
+                      description: Fuel Surcharge
+                      type: accessorial_fee
+                    items:
+                      description: 'Line Item associated with the obligation. '
+                      properties:
+                        amount:
+                          description: Amount of the obligation in cents
+                          example: 6500
+                          type: integer
+                        description:
+                          description: Describe the line item
+                          example: Lumper Fee
+                          type: string
+                        type:
+                          description: Type of the line item
+                          enum:
+                          - accessorial_fee
+                          - base_amount
+                          - express_factoring_fee
+                          - non_factoring_fee
+                          - job_processing_fee
+                          - servicing_fee
+                          example: accessorial_fee
+                          type: string
+                      title: Obligation Line Item
+                      type: object
+                    type: array
+                  obligation_date:
+                    description: Invoice date of the obligation.
+                    type: string
+                  reference_number:
+                    description: PO or Invoice number.
+                    nullable: true
+                    type: string
+                  subtype:
+                    description: Subtype of the obligation
+                    enum:
+                    - primary
+                    - advance
+                    - rebate
+                    - factoring_fee
+                    - servicing_fee
+                    type: string
+                  total_amount:
+                    description: Total amount of the obligation in cents
+                    type: integer
+                  type:
+                    description: Type of the obligation
+                    enum:
+                    - receivable
+                    - payable
+                    - earnings
+                    type: string
+                title: Job Obligation Data
+                type: object
+              type: array
+            reference_number:
+              description: Job reference number
+              type: string
+            status:
+              description: Job statuses
+              enum:
+              - draft
+              - pending
+              - approved
+              - rejected
+              - completed
+              type: string
+            status_message:
+              description: Message from our team
+              nullable: true
+              type: string
+            uuid:
+              description: Unique identifier for the job in UUID4 format
+              type: string
+          type: object
+      title: Job Create Response
+      type: object
+    Job Quote Request:
+      description: Request body for requesting a factoring fee quote
+      example:
+        obligations:
+        - client_payee_relationship_id: 21
+          due_date: '2020-02-26T15:34:22Z'
+          obligation_date: '2020-01-26T15:34:22Z'
+          reference_number: ''
+          subtype: primary
+          total_amount: 80000
+          type: payable
+        - client_debtor_relationship_id: 30
+          due_date: '2020-03-26T04:00:00Z'
+          obligation_date: '2020-02-26T04:00:00Z'
+          reference_number: ''
+          subtype: primary
+          total_amount: 100000
+          type: receivable
+      properties:
+        obligations:
+          items:
+            description: Payables, Receivables, and Denim's Fees for a job
+            properties:
+              client_debtor_relationship_id:
+                description: Client debtor relationship ID for the receivable obligation
+                nullable: true
+                type: integer
+              client_payee_relationship_id:
+                description: Client payee relationship ID for the payable obligation
+                nullable: true
+                type: integer
+              due_date:
+                description: Date obligation is due in ISO format. The due_date should be within -60 and +120 days of the current datetime.
+                type: string
+              obligation_date:
+                description: Invoice date of the obligation.
+                type: string
+              reference_number:
+                description: PO or Invoice number.
+                nullable: true
+                type: string
+              subtype:
+                description: Subtype of the obligation
+                enum:
+                - primary
+                - client
+                type: string
+              total_amount:
+                description: Total amount of the obligation in cents
+                type: integer
+              type:
+                description: Type of the obligation
+                enum:
+                - receivable
+                - payable
+                type: string
+              uuid:
+                description: Unique identifier for the Obligation in UUID4 format. Optional
+                required: false
+                type: string
+            title: Job Obligation Data
+            type: object
+          type: array
+      title: Job Quote Request
+      type: object
+    Job:
+      description: A job and it's documents and obligations.
+      properties:
+        actionable_doc_audit_issue_count:
+          default: 0
+          description: Count of document-audit issues in action_required status for this job.
+          minimum: 0
+          type: integer
+        client_id:
+          description: Client ID
+          type: integer
+        company_id:
+          description: Company ID
+          type: integer
+        documents:
+          items:
+            $ref: '#/components/schemas/Job Document'
+          type: array
+        is_approved:
+          description: Status of job approval
+          type: boolean
+        is_rejected:
+          description: Status of job rejection
+          type: boolean
+        is_validated:
+          description: Status of job validation
+          type: boolean
+        is_verified:
+          description: Status of job verification
+          type: boolean
+        manual_needs_attention:
+          default: false
+          description: Boolean indicating only manual/admin needs-attention signals (excludes document-audit issue signals).
+          type: boolean
+        needs_attention:
+          description: 'Composite filter flag: true when manual_needs_attention is true OR actionable_doc_audit_issue_count > 0.'
+          type: boolean
+        notes:
+          description: Notes for our team
+          nullable: true
+          type: string
+        obligations:
+          items:
+            $ref: '#/components/schemas/Job Obligation'
+          type: array
+        reference_number:
+          description: Job reference number
+          type: string
+        status:
+          description: Job statuses
+          enum:
+          - draft
+          - pending
+          - approved
+          - rejected
+          - completed
+          type: string
+        status_message:
+          description: Message from our team
+          nullable: true
+          type: string
+        uuid:
+          description: Unique identifier for the job in UUID4 format
+          type: string
+      title: Job
+      type: object
+    Add a document to a job:
+      description: Provide a publically available `url` to a PDF, PNG, or JPEG documents associated with a job. Files are downloaded and then uploaded to our secure storage.
+      properties:
+        subtype:
+          description: Billing or supporting paperwork subtype. Optional
+          enum:
+          - purchase_order
+          - proof_of_work
+          - invoice
+          nullable: true
+          type: string
+        type:
+          description: Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier.
+          enum:
+          - billing_paperwork
+          - supporting_paperwork
+          type: string
+        url:
+          description: 'Full remote URL of document file to be downloaded and uploaded to our secure storage. Content-Type header is required in response. Allowed Content-Type values: application/pdf, image/png and image/jpeg.'
+          type: string
+      title: Add a document to a job
+      type: object
+    Job Create Request:
+      description: Request body for creating a job
+      example:
+        documents:
+        - subtype: proof_of_work
+          type: billing_paperwork
+          url: https://example.com/samples/sample_files/sample_document.pdf
+        - subtype: invoice
+          type: supporting_paperwork
+          url: https://example.com/samples/sample_files/sample_document.pdf
+        is_factored: true
+        notes: There was a lumper fee
+        obligations:
+        - client_payee_relationship_id: 21
+          due_date: '2020-02-26T15:34:22Z'
+          obligation_date: '2020-01-26T15:34:22Z'
+          reference_number: ''
+          subtype: primary
+          total_amount: 80000
+          type: payable
+        - client_debtor_relationship_id: 30
+          due_date: '2020-03-26T04:00:00Z'
+          line_items:
+          - amount: 89000
+            description: Invoice Price
+            type: base_amount
+          - amount: 9000
+            description: Lumper Fee
+            type: accessorial_fee
+          - amount: 2000
+            description: Fuel Surcharge
+            type: accessorial_fee
+          obligation_date: '2020-02-26T04:00:00Z'
+          reference_number: ''
+          subtype: primary
+          total_amount: 100000
+          type: receivable
+        reference_number: test-123
+      properties:
+        documents:
+          description: Associated documents for the job. Optional
+          properties:
+            subtype:
+              description: Billing or supporting paperwork subtype. Optional
+              enum:
+              - purchase_order
+              - proof_of_work
+              - invoice
+              nullable: true
+              type: string
+            type:
+              description: Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier.
+              enum:
+              - billing_paperwork
+              - supporting_paperwork
+              type: string
+            url:
+              description: 'Full remote URL of document file to be uploaded. Content-Type header is required in response. Allowed Content-Type values: application/pdf, image/png and image/jpeg.'
+              type: string
+          title: Job Document
+          type: object
+        is_factored:
+          description: Required. Option for if the job should be factored or not.
+          nullable: false
+          title: Factoring Option
+          type: boolean
+        notes:
+          description: Notes for our team
+          example: Notes for the Denim operations team.
+          nullable: true
+          title: Notes
+          type: string
+        obligations:
+          items:
+            description: Payables, Receivables, and Denim's Fees for a job
+            properties:
+              client_debtor_relationship_id:
+                description: Client debtor relationship ID for the receivable obligation
+                nullable: true
+                type: integer
+              client_payee_relationship_id:
+                description: Client payee relationship ID for the payable obligation
+                nullable: true
+                type: integer
+              due_date:
+                description: Date obligation is due in ISO format. The due_date should be within -60 and +120 days of the current datetime.
+                type: string
+              line_items:
+                description: "  Line Items associated with the obligation. Two requirements:\n  1. base_amount line item must be provided, the rest should be accessorial_fee\n  1. The sum of all line item amounts must add up to the total_amount of the receivable obligation\n"
+                example:
+                - amount: 89000
+                  description: Invoice Price
+                  type: base_amount
+                - amount: 9000
+                  description: Lumper Fee
+                  type: accessorial_fee
+                - amount: 2000
+                  description: Fuel Surcharge
+                  type: accessorial_fee
+                items:
+                  description: 'Line Item associated with the obligation. '
+                  properties:
+                    amount:
+                      description: Amount of the obligation in cents
+                      example: 6500
+                      type: integer
+                    description:
+                      description: Describe the line item
+                      example: Lumper Fee
+                      type: string
+                    type:
+                      description: Type of the line item
+                      enum:
+                      - accessorial_fee
+                      - base_amount
+                      - express_factoring_fee
+                      - non_factoring_fee
+                      - job_processing_fee
+                      - servicing_fee
+                      example: accessorial_fee
+                      type: string
+                  title: Obligation Line Item
+                  type: object
+                type: array
+              obligation_date:
+                description: Invoice date of the obligation.
+                type: string
+              reference_number:
+                description: PO or Invoice number.
+                nullable: true
+                type: string
+              subtype:
+                description: Subtype of the obligation
+                enum:
+                - primary
+                - client
+                type: string
+              total_amount:
+                description: Total amount of the obligation in cents
+                type: integer
+              type:
+                description: Type of the obligation
+                enum:
+                - receivable
+                - payable
+                type: string
+            title: Job Obligation Data
+            type: object
+          type: array
+        reference_number:
+          description: Job reference number, must be unqiue to your company. Only alphanumeric and dashes allowed.
+          example: JO-1203-3044
+          title: Reference Number
+          type: string
+      title: Job Create Request
+      type: object
+    Job Obligation:
+      description: Payables, Receivables, and Denim's Fees for a job
+      properties:
+        allocated_payables:
+          description: '[Not yet implemented] For receivable-only jobs, tracks the payables associated to the receivable. In particular for LTL shipments, this enables a receivable-only job to be associated with previous payable obligations.'
+          example: []
+          items:
+            properties:
+              allocated_cost:
+                description: Allocated cost in cents.
+                type: number
+              allocated_revenue:
+                description: Allocated revenue in cents
+                type: number
+              payable_reference_number:
+                description: Payable reference number
+                required: true
+                type: string
+            type: object
+          type: array
+        allocated_receivables:
+          description: '[Not yet implemented] For payable-only jobs, tracks the receivables associated to the payable. In particular for LTL shipments, this enables a payable-only job to be associated with a future receivable obligation.'
+          example: []
+          items:
+            properties:
+              allocated_cost:
+                description: Allocated cost in cents.
+                type: number
+              allocated_revenue:
+                description: Allocated revenue in cents
+                type: number
+              receivable_reference_number:
+                description: Receivable reference number
+                required: true
+                type: string
+            type: object
+          type: array
+        amount_due:
+          description: Amount due on the obligation in cents
+          type: integer
+        applied_amount:
+          description: Amount of transactions that have been applied to the obligation in cents
+          nullable: true
+          type: integer
+        company_id:
+          description: Company ID for the obligation
+          type: integer
+        company_name:
+          description: Company name of the obligation
+          type: string
+        discounted_days:
+          description: Number of days factoring was delayed for a discount
+          type: integer
+        due_date:
+          description: Date obligation is due in ISO format. The due_date should be within -60 and +120 days of the current datetime.
+          type: string
+        line_items:
+          description: "  Line Items associated with the obligation. Two requirements:\n  1. base_amount line item must be provided, the rest should be accessorial_fee\n  1. The sum of all line item amounts must add up to the total_amount of the receivable obligation\n"
+          example:
+          - amount: 89000
+            description: Invoice Price
+            type: base_amount
+          - amount: 9000
+            description: Lumper Fee
+            type: accessorial_fee
+          - amount: 2000
+            description: Fuel Surcharge
+            type: accessorial_fee
+          items:
+            description: 'Line Item associated with the obligation. '
+            properties:
+              amount:
+                description: Amount of the obligation in cents
+                example: 6500
+                type: integer
+              description:
+                description: Describe the line item
+                example: Lumper Fee
+                type: string
+              type:
+                description: Type of the line item
+                enum:
+                - accessorial_fee
+                - base_amount
+                - express_factoring_fee
+                - non_factoring_fee
+                - job_processing_fee
+                - servicing_fee
+                example: accessorial_fee
+                type: string
+            title: Obligation Line Item
+            type: object
+          type: array
+        payment_details:
+          description: Payment details for the obligation
+          properties:
+            account_name:
+              description: Name of account used for payment
+              required: false
+              type: string
+            account_number:
+              description: Last four digits of the account used for payment
+              example: X7890
+              required: false
+              type: string
+            account_type:
+              description: Type of account used for payment
+              enum:
+              - checking
+              - savings
+              - check_address
+              required: false
+              type: string
+            check_number:
+              description: Number of check used for payment
+              required: false
+              type: string
+          type: object
+        payment_status:
+          description: Payment status of the obligation
+          enum:
+          - pending
+          - fully_paid
+          - overpaid
+          - underpaid
+          - expected
+          - scheduled
+          nullable: true
+          type: string
+        subtype:
+          description: Subtype of the obligation
+          enum:
+          - primary
+          - client
+          - advance
+          - rebate
+          - factoring_fee
+          - servicing_fee
+          type: string
+        total_amount:
+          description: Total amount of the obligation in cents
+          type: integer
+        type:
+          description: Type of the obligation
+          enum:
+          - receivable
+          - payable
+          - earnings
+          type: string
+        uuid:
+          description: Unique identifier for the obligation in UUID4 format.
+          type: string
+      title: Job Obligation
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: x-api-key
+      type: apiKey
+externalDocs:
+  description: API Integration Guides
+  url: https://help.denim.com/hc/en-us/sections/9403805442843-API-Integration-Guides
