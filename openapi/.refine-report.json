@@ -1,0 +1,24 @@
+{
+  "provider": "denim",
+  "sources": [
+    "denim-companies-api-openapi.yml",
+    "denim-debtors-api-openapi.yml",
+    "denim-jobs-api-openapi.yml",
+    "denim-jobs-v2-api-openapi.yml",
+    "denim-payees-api-openapi.yml",
+    "denim-transactions-api-openapi.yml"
+  ],
+  "outputs": [
+    "denim-companies-api-openapi.yml",
+    "denim-debtors-api-openapi.yml",
+    "denim-jobs-api-openapi.yml",
+    "denim-jobs-v2-api-openapi.yml",
+    "denim-payees-api-openapi.yml",
+    "denim-transactions-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

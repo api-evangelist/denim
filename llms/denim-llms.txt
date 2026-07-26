@@ -1,0 +1,30 @@
+# Denim
+
+> Denim is an all-in-one financial partner for freight brokers, trucking companies, and 3PLs, providing freight factoring, invoicing, collections, carrier payments, and back-office automation. The Denim Public API exposes freight loads (jobs), debtors, payees, companies, factoring companies, and transactions over a REST/OpenAPI 3.0 interface secured with an x-api-key header.
+
+## API
+
+- [API Reference (Swagger UI)](https://app.denim.com/api/v1/documentation): Denim Public API Reference Documentation 1.0.0
+- [OpenAPI spec](https://app.denim.com/api/v1/open-api-specs): OpenAPI 3.0.0 document (v1 + v2 Jobs)
+- [API documents / roadmap](https://www.denim.com/denim-api-documents): API overview page
+
+## Resources (operations)
+
+- Jobs: list, create, quote, show, delete, revert-to-draft, add documents (v1 and v2)
+- Companies: search companies, list factoring companies
+- Debtors: list and create client-debtor relationships
+- Payees: list and create client-payee relationships, assign factor
+- Transactions: list transactions
+
+## Docs
+
+- [Help Center](https://help.denim.com/hc/en-us): Denim knowledge base
+- [Integrations](https://www.denim.com/integrations): TMS and freight-tech integrations
+- [Pricing](https://www.denim.com/pricing)
+- [Blog](https://www.denim.com/blog)
+- [Status](https://status.denim.com): service status page
+
+## Legal
+
+- [Terms & Conditions](https://www.denim.com/terms-conditions)
+- [Privacy Policy](https://www.denim.com/privacy-policy)

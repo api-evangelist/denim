@@ -1,0 +1,58 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/denim-openapi-original.json
+notes: >-
+  Cross-cutting request/response semantics for the Denim Public API, derived from the
+  published OpenAPI 3.0 spec. Denim is a freight-factoring and back-office platform; the
+  API models Jobs (loads), Debtors, Payees, Companies, and Transactions.
+authentication:
+  style: api-key
+  location: header
+  parameter: x-api-key
+  see: authentication/denim-authentication.yml
+base_urls:
+  production: https://app.denim.com/api
+  staging: https://staging.denim.com/api
+  note: >-
+    The OpenAPI servers[] block lists only the staging host (https://staging.denim.com);
+    production requests are issued against https://app.denim.com. Both share the /api/v1
+    and /api/v2 path prefixes.
+versioning:
+  scheme: uri-path
+  versions: [v1, v2]
+  current: v2
+  note: >-
+    v1 and v2 coexist under /api/v1 and /api/v2. v2 currently covers the Jobs resource
+    (List, Create, Show, Create Document) with a revised Job Create Request shape.
+pagination:
+  style: page-number
+  params:
+    page: query
+    per_page: query
+  note: List endpoints (jobs, companies, debtor-relationships, payee-relationships,
+    transactions) accept page and per_page query parameters.
+filtering_sorting:
+  query: Free-text search parameter on list endpoints (e.g. companies, jobs).
+  sort: Sort parameter on list endpoints.
+  filters: Structured filters parameter (Debtor Relationship Filters / Payee Relationship Filters).
+  date_range: start_date and end_date query parameters on transaction/job listings.
+  other_filters: [active, company_type, needs_attention, payment_types_filter, status, transaction_owner]
+idempotency:
+  supported: false
+  note: >-
+    The published OpenAPI declares no Idempotency-Key header or parameter, and the docs
+    do not document an idempotency contract. Create operations (jobs, relationships) are
+    not documented as idempotent. No Idempotency pointer is emitted for this provider.
+error_envelope:
+  documented: false
+  note: >-
+    The published spec declares only 2xx responses (200/201/204); no 4xx/5xx schemas or
+    application/problem+json envelopes are defined. Authentication failures return via the
+    x-api-key scheme (401) but are not modeled in the spec.
+rate_limiting:
+  documented: false
+  note: No rate-limit headers or policy are documented in the public spec.
+cross_links:
+  authentication: authentication/denim-authentication.yml
+  lifecycle: lifecycle/denim-lifecycle.yml
+  data_model: data-model/denim-data-model.yml

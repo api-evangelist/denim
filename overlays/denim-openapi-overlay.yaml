@@ -1,0 +1,29 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Denim Public API
+  version: 1.0.0
+extends: openapi/denim-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: '2026-07-18'
+      x-apievangelist-provider: denim
+      x-apievangelist-notes: >-
+        Denim freight-factoring and back-office API. Enhancements captured as an overlay;
+        the original spec is never mutated.
+  - target: $.servers
+    update:
+      - description: Production Environment
+        url: https://app.denim.com
+      - description: Staging Environment
+        url: https://staging.denim.com
+    # The published spec lists only staging; production requests go to app.denim.com.
+  - target: $.info
+    update:
+      x-apievangelist-recommendations:
+        - Add 4xx/5xx responses (401 unauthorized, 404 not found, 422 validation) with an
+          application/problem+json (RFC 9457) envelope.
+        - Adopt stable, unique, human-readable operationIds (current ids are auto-generated
+          Elixir controller names with spaces and duplicate suffixes).
+        - Document rate-limit signaling headers.
+        - Publish a first-party SDK and/or CLI.

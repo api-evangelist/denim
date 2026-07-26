@@ -1,0 +1,266 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/denim-openapi-original.json
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 19
+  by_action_class:
+    connected: 9
+    acting: 10
+  by_consequence:
+    read: 9
+    safety-critical: 10
+  human_in_the_loop_required: 10
+operations:
+- path: /api/v1/companies
+  method: get
+  operationId: AxlePayWeb.Api.V1.CompanyController.index (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/companies/factors
+  method: get
+  operationId: AxlePayWeb.Api.V1.FactoringCompanyController.index
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/debtor-relationships
+  method: get
+  operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/debtor-relationships
+  method: post
+  operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/jobs
+  method: get
+  operationId: AxlePayWeb.Api.V1.JobController.index (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/jobs
+  method: post
+  operationId: AxlePayWeb.Api.V1.JobController.create (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/jobs/quote
+  method: post
+  operationId: AxlePayWeb.Api.V1.JobController.get_quote
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/jobs/{id}
+  method: delete
+  operationId: AxlePayWeb.Api.V1.JobController.delete (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/jobs/{id}
+  method: get
+  operationId: AxlePayWeb.Api.V1.JobController.show (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/jobs/{job_id}/documents
+  method: post
+  operationId: Elixir.AxlePayWeb.Api.V1.Job.DocumentController.create
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/jobs/{job_id}/revert-to-draft
+  method: post
+  operationId: AxlePayWeb.Api.V1.JobController.revert_to_draft (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/payee-relationships
+  method: get
+  operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.index (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v1/payee-relationships
+  method: post
+  operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.create (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/payee-relationships/{client_payee_relationship_id}/update-assign-factor
+  method: post
+  operationId: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor (2)
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v1/transactions
+  method: get
+  operationId: AxlePayWeb.Api.V1.TransactionController.index (2)
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v2/jobs
+  method: get
+  operationId: AxlePayWeb.Api.V2.JobController.index
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v2/jobs
+  method: post
+  operationId: AxlePayWeb.Api.V2.JobController.create
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /api/v2/jobs/{job_id}
+  method: get
+  operationId: AxlePayWeb.Api.V2.JobController.show
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/v2/jobs/{job_id}/document
+  method: post
+  operationId: AxlePayWeb.Api.V2.JobController.create_document
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required

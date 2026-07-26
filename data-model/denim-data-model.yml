@@ -1,0 +1,74 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/denim-openapi-original.json
+notes: >-
+  Entity-relationship graph derived from the Denim Public API OpenAPI schemas ($ref links
+  and id-reference fields). Denim's domain models freight loads (Jobs) and the money that
+  flows around them between brokers (clients), their customers (Debtors), and their carriers
+  (Payees), with factoring companies assigned to payees.
+entities:
+  - name: Job
+    description: A freight load / shipment and its associated invoicing and obligations.
+    schemas: [Job, Job Create Request, V2 Job Create Request, Job Show Response, Job Obligation, Load details, Shipment details]
+  - name: Debtor
+    description: The party billed for a load (the broker's customer / shipper).
+    schemas: [Debtor, Debtor Company, Debtor Create, Client-Debtor Relationship]
+  - name: Payee
+    description: The party paid for a load (carrier / vendor), optionally with an assigned factor.
+    schemas: [Payee, Payee Company, Payee Create, Payee Factor Company, Client-Payee Relationship]
+  - name: Company
+    description: A generic company record; clients, debtors, payees and factors are all companies.
+    schemas: [Generic Company, Company Index Response]
+  - name: FactoringCompany
+    description: A factoring company that can be assigned to a payee relationship.
+    schemas: [Factoring Company, Factoring Company Index Response]
+  - name: Obligation
+    description: A receivable or payable tied to a job.
+    schemas: [Receivable Obligation, Payable Obligation, Job Obligation, Obligation Line Item, Obligation Document]
+  - name: Transaction
+    description: A money movement applied against obligations.
+    schemas: [Transaction, Transaction Applied, Transaction Metadata, Transaction Index Response]
+  - name: Document
+    description: A document (rate confirmation, BOL, invoice) attached to a job.
+    schemas: [Job Document, Add a document to a job, Upload a document to a job]
+relationships:
+  - from: Job
+    to: Debtor
+    kind: belongs_to
+    via: debtor
+  - from: Job
+    to: Obligation
+    kind: has_many
+    via: obligations
+  - from: Job
+    to: Document
+    kind: has_many
+    via: documents
+  - from: ClientDebtorRelationship
+    to: Company
+    kind: belongs_to
+    via: client
+  - from: ClientDebtorRelationship
+    to: Debtor
+    kind: belongs_to
+    via: debtor
+  - from: ClientPayeeRelationship
+    to: Company
+    kind: belongs_to
+    via: client
+  - from: ClientPayeeRelationship
+    to: Payee
+    kind: belongs_to
+    via: payee
+  - from: ClientPayeeRelationship
+    to: FactoringCompany
+    kind: has_one
+    via: assigned_factor
+  - from: Transaction
+    to: Obligation
+    kind: has_many
+    via: applied
+  - from: Obligation
+    to: Job
+    kind: belongs_to
+    via: job

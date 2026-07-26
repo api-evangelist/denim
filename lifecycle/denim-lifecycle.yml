@@ -1,0 +1,18 @@
+generated: '2026-07-18'
+method: searched
+source: https://app.denim.com/api/v1/documentation
+versioning:
+  scheme: uri-path
+  versions: [v1, v2]
+  current: v2
+  docs: https://app.denim.com/api/v1/documentation
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No published deprecation policy or RFC 8594 Sunset/Deprecation header support found.
+sla:
+  url: null
+  uptime_target: null
+status_page: https://status.denim.com
+status_page_engine: Uptime Kuma
+deprecated_operations: []

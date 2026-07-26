@@ -1,0 +1,29 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/denim-openapi-original.json
+standards:
+  - id: openapi-3.0
+    conforms: true
+    evidence: Provider publishes an OpenAPI 3.0.0 document at /api/v1/open-api-specs.
+  - id: apikey-auth
+    conforms: true
+    evidence: securitySchemes declares apiKey in header (x-api-key).
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 security scheme in the spec.
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: No application/problem+json responses; only 2xx responses declared.
+  - id: json-api
+    conforms: false
+  - id: pagination
+    conforms: true
+    evidence: Page-number pagination via page/per_page query parameters on list endpoints.
+  - id: idempotency
+    conforms: false
+    evidence: No Idempotency-Key header or parameter documented.
+  - id: webhooks
+    conforms: false
+    evidence: No webhook/AsyncAPI surface published in the spec (two-way TMS sync advertised on the marketing site but no public event catalog).

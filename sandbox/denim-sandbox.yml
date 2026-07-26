@@ -1,0 +1,18 @@
+generated: '2026-07-18'
+method: searched
+source: openapi/denim-openapi-original.json
+environments:
+  - name: staging
+    base_url: https://staging.denim.com
+    description: >-
+      Staging environment, the sole server listed in the published OpenAPI servers[] block.
+      Used for integration testing against the /api/v1 and /api/v2 surface.
+  - name: production
+    base_url: https://app.denim.com
+    description: Production environment where live API keys operate.
+test_credentials:
+  documented: false
+  note: >-
+    Denim does not publish test API keys, magic test identifiers, or fixture values in its
+    public API reference. Access requires a Denim account and an issued x-api-key. No test
+    values are fabricated here.

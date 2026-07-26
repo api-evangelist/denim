@@ -1,0 +1,20 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/denim-openapi-original.json
+skills:
+  - file: denim-create-and-quote-job.md
+    name: Create and quote a freight job
+    api: openapi/denim-openapi-original.json
+    operations:
+      - AxlePayWeb.Api.V1.JobController.get_quote
+      - AxlePayWeb.Api.V1.JobController.create
+      - Elixir.AxlePayWeb.Api.V1.Job.DocumentController.create
+      - AxlePayWeb.Api.V1.JobController.show
+  - file: denim-onboard-debtor-and-payee.md
+    name: Onboard a debtor and a payee relationship
+    api: openapi/denim-openapi-original.json
+    operations:
+      - AxlePayWeb.Api.V1.CompanyController.index
+      - AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create
+      - AxlePayWeb.Api.V1.ClientPayeeRelationshipController.create
+      - AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor
