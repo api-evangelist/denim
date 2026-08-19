@@ -1,0 +1,125 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Denim Public API Reference Documentation Companies Payees API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payees",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Client-Payee Relationships",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/payee-relationships",
+            "params": [
+              {
+                "name": "query",
+                "value": "Best Carrier LLC",
+                "type": "query",
+                "description": "Search string for payee company name or MC Number."
+              },
+              {
+                "name": "filters",
+                "value": "[object Object]",
+                "type": "query",
+                "description": "Payee Relationship Filters.\n\n- status\n- days to pay offset\n- quick pay rate\n    - Note: `quick_pay_rate` is in basis points (ex: 100 bps == %1.00)\",\n"
+              },
+              {
+                "name": "payment_types_filter",
+                "value": "",
+                "type": "query",
+                "description": "Filter for payee payment setting types"
+              },
+              {
+                "name": "page",
+                "value": "1",
+                "type": "query",
+                "description": "The page of results to query."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "The number of entities per page of results."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "This retrieves the payees that your company has a relationship with."
+        },
+        {
+          "info": {
+            "name": "Create a Client-Payee Relationship",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/payee-relationships",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a Client-Payee Relationship. Read the guide below for details. There are several different ways to create payees, whether it includes a factor assignment, etc. Important note: all factor assignments or updates create 'Requests' in our Request Center and these are all reviewed and approved by our operations team before becoming effective. This review is to ensure the proper payees receive payments and don't impact other payee setups.\n"
+        },
+        {
+          "info": {
+            "name": "Update a payee's assigned factor",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/payee-relationships/:client_payee_relationship_id/update-assign-factor",
+            "params": [
+              {
+                "name": "id",
+                "value": "543",
+                "type": "path",
+                "description": "client_payee_relationship_id"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a request to change the factor assigned to the payee. These changes are reviewed by our operations team and the original factor will still be referenced until this request is reviewed and approved."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

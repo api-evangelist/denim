@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Denim Public API Reference Documentation Companies API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Companies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search for Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/companies",
+            "params": [
+              {
+                "name": "query",
+                "value": "ABC Company Inc",
+                "type": "query",
+                "description": "Search term matched against the company's `company_name`, `mc_number`, and `dot_number`.\n\nIf omitted or empty, the endpoint returns all eligible companies (companies with\n`status` of `duplicate` or `inactive` are always excluded), ordered by `sort`.\n\n**Normalization applied to both the search term and `company_name` before matching:**\n- Lowercased\n- Punctuation replaced with spaces\n- Consecutive whitespace collapsed to a single space\n- Leading/trailing whitespace trimmed\n\n**Name matching:** The normalized term is split into tokens. All tokens (other than\ntrailing business-suffix tokens) must appear in the normalized `company_name` for the\nrow to match. Trailing business suffixes — `inc`, `llc`, `corp`, `co`, `ltd`, `ltda`,\n`gmbh`, `plc`, `sa`, `lp`, `llp`, `limited`, `corporation`, `incorporated`, `company` —\nare treated as optional, so `\"Acme Corp\"` will still match a company named `\"Acme Inc\"`.\nSingle-character tokens (e.g. `\"S.A.A.\"`) are matched as a single phrase.\n\n**MC / DOT matching:** `mc_number` and `dot_number` are matched against the raw search\nterm using exact equality (in addition to the name match above), so `\"12345678\"` will\nmatch a company whose `mc_number` is exactly `12345678`.\n\n**Multi-strategy fallback:** If the token-based ILIKE search returns no rows, the\nendpoint falls back to a PostgreSQL trigram-similarity search (`similarity > 0.3`),\nand then to a prefix-aware full-text search on `company_name`. This makes the search\nresilient to typos and partial-word queries.\n\n**Exact numeric mode (debtor add-customer flow):** When `company_type=debtor` AND\n`sort=best_match`, a purely numeric search term (whitespace stripped, leading zeros\nignored) bypasses name search entirely and matches only on exact `mc_number` or\n`dot_number`. At most one row is returned in `data`; `total_results` still reflects\nthe true number of matches so the caller can detect MC/DOT collisions.\n"
+              },
+              {
+                "name": "company_type",
+                "value": "debtor",
+                "type": "query",
+                "description": "Type of company to sort by. Companies of the matching type are listed first (this is a\nsort, not a filter). When `company_type=debtor`, results are additionally filtered to\nexclude companies flagged as payees (`is_payee=true`), and the numeric-exact MC/DOT\nmatch described under `query` is enabled when `sort=best_match`.\n"
+              },
+              {
+                "name": "active",
+                "value": "true",
+                "type": "query",
+                "description": "When `true`, only companies with `status=active` or with an existing (non-deleted) Client-Debtor Relationship for the requesting client are returned. When `false` or omitted, the additional filter is not applied (companies with status `duplicate` and `inactive` are still always excluded)."
+              },
+              {
+                "name": "sort",
+                "value": "best_match",
+                "type": "query",
+                "description": "Sort order for results. Defaults to `company_name` when omitted or empty. See the\n`sort` enum for the full list and ranking semantics. The `best_match` option applies a\nmulti-key ranking; see the operation description for details.\n\nFor `last_payment_applied_at` and `company_name` sorts, ordering composes as:\n(1) matches of `company_type` first (e.g. with `company_type=debtor`, debtor rows\nsort above non-debtor rows), then (2) rows whose `company_name` starts with the\ntrimmed, case-insensitive search term, then (3) the chosen sort field. The\n`best_match` sort uses its own dedicated ranking chain and does not use the prefix\npromotion above.\n"
+              },
+              {
+                "name": "page",
+                "value": "1",
+                "type": "query",
+                "description": "The page of results to query."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "The number of entities per page of results."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a paginated list of company search results.\n\n### What you can search by\nThe `query` parameter is matched against:\n- `company_name` (token-based, normalized — see the `query` parameter for details)\n- `mc_number` (exact equality)\n- `dot_number` (exact equality)\n\nWhen `query` is omitted or empty, the endpoint returns all eligible companies ordered by\n`sort` (defaults to `company_name`). Inactive and duplicate companies are always\nexcluded; when `company_type=debtor`, companies that are paye"
+        },
+        {
+          "info": {
+            "name": "List Factoring Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/companies/factors",
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a list of all Factoring companies established in Denim's database. Return structure is similar to paginated results, however this will always return all factoring companies in 1 page."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

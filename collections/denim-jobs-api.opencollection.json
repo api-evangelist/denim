@@ -1,0 +1,215 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Denim Public API Reference Documentation Companies Jobs API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Jobs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Jobs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/jobs",
+            "params": [
+              {
+                "name": "query",
+                "value": "$1,000.00",
+                "type": "query",
+                "description": "Search by company name, amount, or job number"
+              },
+              {
+                "name": "status",
+                "value": "approved",
+                "type": "query",
+                "description": "Job statuses"
+              },
+              {
+                "name": "needs_attention",
+                "value": "",
+                "type": "query",
+                "description": "When true, return only jobs that need attention: manual/admin flag OR actionable document-audit issue."
+              },
+              {
+                "name": "page",
+                "value": "1",
+                "type": "query",
+                "description": "The page of results to query."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "The number of entities per page of results."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "A job is a collection of payables, receivables, and fees (obligations) associated with an invoice or purchase order."
+        },
+        {
+          "info": {
+            "name": "Create a Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/jobs",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Create a new Job."
+        },
+        {
+          "info": {
+            "name": "Get Job Quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/jobs/quote",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a factoring fee quote for a Job."
+        },
+        {
+          "info": {
+            "name": "Get a single Job Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/jobs/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6",
+                "type": "path",
+                "description": "Job UUID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "This retrieves a single job by UUID"
+        },
+        {
+          "info": {
+            "name": "Delete a Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://staging.denim.com/api/v1/jobs/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6",
+                "type": "path",
+                "description": "Job UUID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Deletes a Job in Pending or Draft status."
+        },
+        {
+          "info": {
+            "name": "Create Job Document",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/jobs/:job_id/documents",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6",
+                "type": "path",
+                "description": "Job UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This endpoint enables adding documents to existing jobs.\n\nThis can accept either a json body with a publicly accessible `url`, `type` and `subtype`, or a multi-part form body including a `file` as the binary and `type` and `subtype`. In either case, the document will be uploaded and stored to our secure Google Cloud Platform storage.\n"
+        },
+        {
+          "info": {
+            "name": "Revert Job to Draft",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://staging.denim.com/api/v1/jobs/:job_id/revert-to-draft",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6",
+                "type": "path",
+                "description": "Job UUID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Reverts a pending Job back to a draft status."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

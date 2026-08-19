@@ -1,0 +1,81 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Denim Public API Reference Documentation Companies Transactions API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transactions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://staging.denim.com/api/v1/transactions",
+            "params": [
+              {
+                "name": "query",
+                "value": "$1,000.00",
+                "type": "query",
+                "description": "Search by company name, amount, reference, or description"
+              },
+              {
+                "name": "start_date",
+                "value": "2020-12-25",
+                "type": "query",
+                "description": "Filter transactions after date in YYYY-MM-DD format"
+              },
+              {
+                "name": "end_date",
+                "value": "2021-01-31",
+                "type": "query",
+                "description": "Filter transactions before date in YYYY-MM-DD format"
+              },
+              {
+                "name": "transaction_owner",
+                "value": "payee",
+                "type": "query",
+                "description": "Enum type to help filter payments by who made them. One of [all, payee, debtor, client]."
+              },
+              {
+                "name": "page",
+                "value": "1",
+                "type": "query",
+                "description": "The page of results to query."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "The number of entities per page of results."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Transactions are payments incoming, outgoing, netting, and adjustments. Transactions are are generally applied towards obligations."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

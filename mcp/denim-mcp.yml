@@ -2,69 +2,73 @@ generated: '2026-07-18'
 method: derived
 status: candidate
 source: openapi/denim-openapi-original.json
-notes: >-
-  No official hosted/remote MCP server was found for Denim (searched docs, npm
-  @modelcontextprotocol, MCP registries). This is a CANDIDATE tool list derived one-to-one
-  from the Denim Public API OpenAPI operations, to seed an MCP wrapper. operationIds are the
-  provider's verbatim Elixir controller identifiers.
+notes: No official hosted/remote MCP server was found for Denim (searched docs, npm @modelcontextprotocol,
+  MCP registries). This is a CANDIDATE tool list derived one-to-one from the Denim Public API OpenAPI
+  operations, to seed an MCP wrapper. operationIds are the provider's verbatim Elixir controller identifiers.
 server:
   name: denim
   transport: http
 tools:
-  - name: search_companies
-    description: Search for companies in the Denim network.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.CompanyController.index
-  - name: list_factoring_companies
-    description: List factoring companies.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.FactoringCompanyController.index
-  - name: list_debtor_relationships
-    description: List client-debtor relationships.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index
-  - name: create_debtor_relationship
-    description: Create a new client-debtor relationship.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create
-  - name: list_jobs
-    description: List jobs (loads).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.index
-  - name: create_job
-    description: Create a job (load).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.create
-  - name: get_job_quote
-    description: Get a factoring quote for a job.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.get_quote
-  - name: get_job
-    description: Get a single job record.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.show
-  - name: delete_job
-    description: Delete a job.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.delete
-  - name: create_job_document
-    description: Attach a document to a job.
-    source_operation: openapi/denim-openapi-original.json#Elixir.AxlePayWeb.Api.V1.Job.DocumentController.create
-  - name: revert_job_to_draft
-    description: Revert a job to draft status.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.revert_to_draft
-  - name: list_payee_relationships
-    description: List client-payee relationships.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.index
-  - name: create_payee_relationship
-    description: Create a client-payee relationship.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.create
-  - name: update_payee_assigned_factor
-    description: Update a payee's assigned factor.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor
-  - name: list_transactions
-    description: List transactions.
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.TransactionController.index
-  - name: list_jobs_v2
-    description: List jobs (v2).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.index
-  - name: create_job_v2
-    description: Create a job (v2).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.create
-  - name: get_job_v2
-    description: Show a job by ID (v2).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.show
-  - name: create_job_document_v2
-    description: Attach a document to a job (v2).
-    source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.create_document
+- name: search_companies
+  description: Search for companies in the Denim network.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.CompanyController.index
+- name: list_factoring_companies
+  description: List factoring companies.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.FactoringCompanyController.index
+- name: list_debtor_relationships
+  description: List client-debtor relationships.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index
+- name: create_debtor_relationship
+  description: Create a new client-debtor relationship.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create
+- name: list_jobs
+  description: List jobs (loads).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.index
+- name: create_job
+  description: Create a job (load).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.create
+- name: get_job_quote
+  description: Get a factoring quote for a job.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.get_quote
+- name: get_job
+  description: Get a single job record.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.show
+- name: delete_job
+  description: Delete a job.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.delete
+- name: create_job_document
+  description: Attach a document to a job.
+  source_operation: openapi/denim-openapi-original.json#Elixir.AxlePayWeb.Api.V1.Job.DocumentController.create
+- name: revert_job_to_draft
+  description: Revert a job to draft status.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.JobController.revert_to_draft
+- name: list_payee_relationships
+  description: List client-payee relationships.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.index
+- name: create_payee_relationship
+  description: Create a client-payee relationship.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.create
+- name: update_payee_assigned_factor
+  description: Update a payee's assigned factor.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor
+- name: list_transactions
+  description: List transactions.
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V1.TransactionController.index
+- name: list_jobs_v2
+  description: List jobs (v2).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.index
+- name: create_job_v2
+  description: Create a job (v2).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.create
+- name: get_job_v2
+  description: Show a job by ID (v2).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.show
+- name: create_job_document_v2
+  description: Attach a document to a job (v2).
+  source_operation: openapi/denim-openapi-original.json#AxlePayWeb.Api.V2.JobController.create_document
+deployment:
+  mode: none
+  verified: derived
+  tools: 19
+  checked: '2026-08-12'
+  source: catalog MCP census

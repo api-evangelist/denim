@@ -1,0 +1,440 @@
+{
+  "item": [
+    {
+      "id": "8139ebce-ce72-4f6b-a2f6-5b3f287b7792",
+      "name": "Debtors",
+      "description": {
+        "content": "A debtor is your customer or shipper. They are the entity that will be paying the invoices. Debtors are a type of Company in our ecosystem and are associated to our shared client through Client-Debtor Relationships.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3d682384-3e50-47fc-9117-193a84e6d3ad",
+          "name": "List Client-Debtor Relationships",
+          "request": {
+            "name": "List Client-Debtor Relationships",
+            "description": {
+              "content": "This retrieves the debtors that your company has a relationship with.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "debtor-relationships"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "Search string for debtor company name or MC Number."
+                },
+                {
+                  "disabled": false,
+                  "key": "average_dbt_from",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "average_dbt_to",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "average_dso_from",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "average_dso_to",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "credit_usage_from",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "credit_usage_to",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "funding_type",
+                  "value": "<enum>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "net_terms",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "open_aging_from",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "open_aging_to",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "open_chargebacks_from",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "open_chargebacks_to",
+                  "value": "<integer>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "overall_status",
+                  "value": "[\"<enum>\",\"<enum>\"]",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_col",
+                  "value": "<string>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_dir",
+                  "value": "<string>",
+                  "description": "Debtor Relationship Filters"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "The page of results to query."
+                },
+                {
+                  "disabled": false,
+                  "key": "per_page",
+                  "value": "<integer>",
+                  "description": "The number of entities per page of results."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "85f09892-b5a8-47b6-8166-bb9c25265478",
+              "name": "Debtor relationship response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "debtor-relationships"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "ABC Shipping Company"
+                    },
+                    {
+                      "key": "average_dbt_from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "average_dbt_to",
+                      "value": "90"
+                    },
+                    {
+                      "key": "average_dso_from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "average_dso_to",
+                      "value": "90"
+                    },
+                    {
+                      "key": "credit_usage_from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "credit_usage_to",
+                      "value": "100"
+                    },
+                    {
+                      "key": "funding_type",
+                      "value": "factored"
+                    },
+                    {
+                      "key": "net_terms",
+                      "value": "30"
+                    },
+                    {
+                      "key": "open_aging_from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "open_aging_to",
+                      "value": "10000"
+                    },
+                    {
+                      "key": "open_chargebacks_from",
+                      "value": "0"
+                    },
+                    {
+                      "key": "open_chargebacks_to",
+                      "value": "10000"
+                    },
+                    {
+                      "key": "overall_status",
+                      "value": "verified,under_review,no_buy,declined,noa_pending_delivery"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"client_debtor_relationship\": {\n        \"average_dbt_past_60_days\": 5,\n        \"average_dso_past_60_days\": 25.5,\n        \"credit_limit\": 500000,\n        \"credit_used\": 200000,\n        \"default_job_is_factored\": true,\n        \"id\": 3,\n        \"net_terms\": 30,\n        \"no_buy_status\": false,\n        \"noa_status\": \"pending_delivery\",\n        \"open_aging\": 0,\n        \"open_chargebacks\": 0,\n        \"overall_status\": \"noa_pending_delivery\",\n        \"status\": \"pending\"\n      },\n      \"company\": {\n        \"address_line_1\": \"1 Fifth Avenue\",\n        \"address_line_2\": \"PH #9\",\n        \"city\": \"New York\",\n        \"company_name\": \"ABC Shipping Company\",\n        \"dot_number\": \"1234567\",\n        \"ein\": \"123456789\",\n        \"freight_forwarder_number\": \"123456\",\n        \"id\": 74,\n        \"mc_number\": \"12345678\",\n        \"state\": \"NY\",\n        \"website\": \"www.abcshipping.com\",\n        \"zip_code\": \"11111\"\n      },\n      \"debtor\": {\n        \"credit_limit\": null,\n        \"credit_used\": null\n      }\n    },\n    {\n      \"client_debtor_relationship\": {\n        \"average_dbt_past_60_days\": 12.3,\n        \"average_dso_past_60_days\": 32.7,\n        \"credit_limit\": 500000,\n        \"credit_used\": 200000,\n        \"default_job_is_factored\": false,\n        \"id\": 43,\n        \"net_terms\": 45,\n        \"no_buy_status\": false,\n        \"noa_status\": \"pending_delivery\",\n        \"open_aging\": 500000,\n        \"open_chargebacks\": 100000,\n        \"overall_status\": \"under_review\",\n        \"status\": \"pending\"\n      },\n      \"company\": {\n        \"address_line_1\": \"123 Royals Blvd.\",\n        \"address_line_2\": \"attn: John Smith\",\n        \"city\": \"Kansas City\",\n        \"company_name\": \"Best Customer LLC\",\n        \"ein\": \"123456789\",\n        \"freight_forwarder_number\": \"123456\",\n        \"id\": 43,\n        \"mc_number\": \"12345678\",\n        \"state\": \"MO\",\n        \"website\": \"www.bestco.com\",\n        \"zip_code\": \"11111\"\n      },\n      \"debtor\": {\n        \"credit_limit\": null,\n        \"credit_used\": null\n      }\n    }\n  ],\n  \"page\": 1,\n  \"per_page\": 2,\n  \"total_pages\": 3\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "01a007b6-966f-45df-b16b-721c4a22ccb7",
+          "name": "Create new Client-Debtor Relationship",
+          "request": {
+            "name": "Create new Client-Debtor Relationship",
+            "description": {
+              "content": "You can create a debtor relationship by linking to an existing approved company in our system (preferred) by passing the company_id found using the GET/companies endpoint. Alternatively, you can create a new company and client-debtor relationship simultaneously by sending the company attributes. Note that all credit requests are reviewed by our operations team for approval.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "debtor-relationships"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": {\n    \"company_name\": \"<string>\",\n    \"address_line_1\": \"<string>\",\n    \"address_line_2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"country\": \"USA\",\n    \"dot_number\": \"<string>\",\n    \"ein\": \"<string>\",\n    \"freight_forwarder_number\": \"<string>\",\n    \"id\": \"<integer>\",\n    \"mc_number\": \"<string>\",\n    \"state\": \"<string>\",\n    \"website\": \"<string>\",\n    \"zip_code\": \"<string>\"\n  },\n  \"company_id\": \"<integer>\",\n  \"credit_request\": {\n    \"credit_amount\": \"<integer>\",\n    \"invoicing_email\": \"<string>\",\n    \"phone_number\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8dd65255-925c-49af-83e1-b68905f31612",
+              "name": "Debtor relationship created response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "debtor-relationships"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_id\": 123\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"client_debtor_relationship\": {\n      \"average_dbt_past_60_days\": null,\n      \"average_dso_past_60_days\": null,\n      \"credit_limit\": 500000,\n      \"credit_used\": 200000,\n      \"default_job_is_factored\": true,\n      \"id\": 3,\n      \"net_terms\": 30,\n      \"no_buy_status\": false,\n      \"noa_status\": \"pending_delivery\",\n      \"open_aging\": 0,\n      \"open_chargebacks\": 0,\n      \"overall_status\": \"noa_pending_delivery\",\n      \"status\": \"pending\"\n    },\n    \"company\": {\n      \"address_line_1\": \"1 Fifth Ave.\",\n      \"address_line_2\": \"PH #9\",\n      \"city\": \"New York\",\n      \"company_name\": \"ABC Shipping Company\",\n      \"country\": \"USA\",\n      \"dot_number\": \"1234567\",\n      \"ein\": \"123456789\",\n      \"freight_forwarder_number\": \"123456\",\n      \"id\": 74,\n      \"mc_number\": \"12345678\",\n      \"state\": \"NY\",\n      \"website\": \"www.abcshipping.com\",\n      \"zip_code\": \"11111\"\n    },\n    \"debtor\": {\n      \"credit_limit\": null,\n      \"credit_used\": null\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://staging.denim.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "acda674e-81bc-4bbc-ac2f-039c7f834b4f",
+    "name": "Denim Public API Reference Documentation Companies Debtors API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.\n\nContact Support:\n Name: Denim Engineering Team\n Email: engineering@denim.com",
+      "type": "text/plain"
+    }
+  }
+}

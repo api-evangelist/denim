@@ -1,0 +1,309 @@
+{
+  "item": [
+    {
+      "id": "a9e837d3-a69f-4364-a68c-fa47e33d977e",
+      "name": "Companies",
+      "description": {
+        "content": "A company in our system includes Payees, Debtors, and Factoring companies. Companies records are available globally in our ecosystem and shared by other clients.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c5e37374-beb6-4954-9c3d-29b769206f53",
+          "name": "Search for Companies",
+          "request": {
+            "name": "Search for Companies",
+            "description": {
+              "content": "Returns a paginated list of company search results.\n\n### What you can search by\nThe `query` parameter is matched against:\n- `company_name` (token-based, normalized — see the `query` parameter for details)\n- `mc_number` (exact equality)\n- `dot_number` (exact equality)\n\nWhen `query` is omitted or empty, the endpoint returns all eligible companies ordered by\n`sort` (defaults to `company_name`). Inactive and duplicate companies are always\nexcluded; when `company_type=debtor`, companies that are payee-only (not also a debtor or client) are excluded.\n\n### Pagination\nResults are paginated. Defaults are `page=1` and `per_page=25`. The response always\nincludes `page`, `per_page`, `total_pages`, and `total_results` fields alongside `data`.\n\n### Multi-strategy text search\nFor non-numeric (or numeric-but-not-`exact_numeric_mode`) queries, the search tries:\n1. **Token ILIKE** against the normalized `company_name` (primary path).\n2. **Trigram similarity** (`similarity > 0.3`) fallback when ILIKE returns nothing.\n3. **Prefix full-text search** (`to_tsquery` with `:*` per token) as a final fallback.\n\nThis makes the search resilient to typos and partial-word queries.\n\n### How matches are ranked\nPass `sort=best_match` to rank results by relevance to `query`. For\n`company_type=debtor`, ranking factors in priority order are:\n\n1. Exact normalized name match.\n2. Number of query tokens found in `company_name`.\n3. Number of adjacent query-token pairs found in `company_name`.\n4. Active status (only applied to exact-name matches).\n5. Existence of a Client-Debtor Relationship between the requesting client and the company.\n6. CDR popularity (distinct clients with a non-deleted CDR for the company).\n7. Credit amount — `max(debtor.credit_limit, debtor.shared_credit_limit)`. When the\n   company has multiple CDRs, the row with the highest credit wins.\n8. Trigram similarity (fuzzy fallback).\n9. Company `id` ascending (stable tiebreaker).\n\nSee the `sort` parameter for the non-debtor ranking chain.\n\n### MC / DOT exact lookup\nWhen `company_type=debtor` AND `sort=best_match` AND `query` is purely numeric, the\nsearch short-circuits to an exact `mc_number` / `dot_number` match and returns at most\none row in `data`. `total_results` still reflects the true number of matches so callers\ncan detect MC/DOT collisions.\n\n### Outputs\nEach result entry includes:\n- `company` — identity, address, status, `is_debtor` / `is_payee` / `is_factor` flags,\n  and `last_payment_applied_at` (timestamp of the most recent payment received from this\n  company across the platform — the customer's \"last paid date\").\n- `debtor` (only when `company.is_debtor=true`) — shared credit limit (`credit_limit`)\n  and net terms (`net_terms`). Open-credit (`credit_limit - credit_used`) is not\n  computed here; fetch it via the Client-Debtor Relationships endpoint when needed.\n- `client_debtor_relationship` (only when a non-deleted CDR exists for the requesting\n  client) — relationship `id`, `status`, `noa_status`, `default_job_is_factored`, and\n  `net_terms`. The `id` can be used as `client_debtor_relationship_id` in other API\n  requests.\n- `payee` (only when `company.is_payee=true`) — factor company name.\n- `client_payee_relationship` (only when a non-deleted CPR exists) — relationship `id`,\n  `contact_email`, and `days_to_pay_offset`. The `id` can be used as\n  `client_payee_relationship_id` in other API requests.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "companies"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "Search term matched against the company's `company_name`, `mc_number`, and `dot_number`.\n\nIf omitted or empty, the endpoint returns all eligible companies (companies with\n`status` of `duplicate` or `inactive` are always excluded), ordered by `sort`.\n\n**Normalization applied to both the search term and `company_name` before matching:**\n- Lowercased\n- Punctuation replaced with spaces\n- Consecutive whitespace collapsed to a single space\n- Leading/trailing whitespace trimmed\n\n**Name matching:** The normalized term is split into tokens. All tokens (other than\ntrailing business-suffix tokens) must appear in the normalized `company_name` for the\nrow to match. Trailing business suffixes — `inc`, `llc`, `corp`, `co`, `ltd`, `ltda`,\n`gmbh`, `plc`, `sa`, `lp`, `llp`, `limited`, `corporation`, `incorporated`, `company` —\nare treated as optional, so `\"Acme Corp\"` will still match a company named `\"Acme Inc\"`.\nSingle-character tokens (e.g. `\"S.A.A.\"`) are matched as a single phrase.\n\n**MC / DOT matching:** `mc_number` and `dot_number` are matched against the raw search\nterm using exact equality (in addition to the name match above), so `\"12345678\"` will\nmatch a company whose `mc_number` is exactly `12345678`.\n\n**Multi-strategy fallback:** If the token-based ILIKE search returns no rows, the\nendpoint falls back to a PostgreSQL trigram-similarity search (`similarity > 0.3`),\nand then to a prefix-aware full-text search on `company_name`. This makes the search\nresilient to typos and partial-word queries.\n\n**Exact numeric mode (debtor add-customer flow):** When `company_type=debtor` AND\n`sort=best_match`, a purely numeric search term (whitespace stripped, leading zeros\nignored) bypasses name search entirely and matches only on exact `mc_number` or\n`dot_number`. At most one row is returned in `data`; `total_results` still reflects\nthe true number of matches so the caller can detect MC/DOT collisions.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "company_type",
+                  "value": "<string>",
+                  "description": "Type of company to sort by. Companies of the matching type are listed first (this is a\nsort, not a filter). When `company_type=debtor`, results are additionally filtered to\nexclude companies flagged as payees (`is_payee=true`), and the numeric-exact MC/DOT\nmatch described under `query` is enabled when `sort=best_match`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "active",
+                  "value": "<boolean>",
+                  "description": "When `true`, only companies with `status=active` or with an existing (non-deleted) Client-Debtor Relationship for the requesting client are returned. When `false` or omitted, the additional filter is not applied (companies with status `duplicate` and `inactive` are still always excluded)."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort",
+                  "value": "<string>",
+                  "description": "Sort order for results. Defaults to `company_name` when omitted or empty. See the\n`sort` enum for the full list and ranking semantics. The `best_match` option applies a\nmulti-key ranking; see the operation description for details.\n\nFor `last_payment_applied_at` and `company_name` sorts, ordering composes as:\n(1) matches of `company_type` first (e.g. with `company_type=debtor`, debtor rows\nsort above non-debtor rows), then (2) rows whose `company_name` starts with the\ntrimmed, case-insensitive search term, then (3) the chosen sort field. The\n`best_match` sort uses its own dedicated ranking chain and does not use the prefix\npromotion above.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "The page of results to query."
+                },
+                {
+                  "disabled": false,
+                  "key": "per_page",
+                  "value": "<integer>",
+                  "description": "The number of entities per page of results."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1bb8cb46-6902-4c92-9d56-417bf9d7aa76",
+              "name": "Company response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "companies"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "ABC Company Inc"
+                    },
+                    {
+                      "key": "company_type",
+                      "value": "debtor"
+                    },
+                    {
+                      "key": "active",
+                      "value": "true"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "best_match"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"client_debtor_relationship\": {\n        \"average_dbt_past_60_days\": 9433.711171025208,\n        \"average_dso_past_60_days\": 4823.568651879049,\n        \"default_job_is_factored\": false,\n        \"id\": 3890,\n        \"net_terms\": 1847,\n        \"noa_status\": \"viewed\",\n        \"status\": \"rejected\"\n      },\n      \"client_payee_relationship\": {\n        \"contact_email\": \"string\",\n        \"days_to_pay_offset\": 2384,\n        \"id\": 626\n      },\n      \"company\": {\n        \"city\": \"string\",\n        \"company_name\": \"string\",\n        \"dot_number\": \"string\",\n        \"ein\": \"string\",\n        \"id\": 4746,\n        \"is_debtor\": true,\n        \"is_factor\": true,\n        \"is_payee\": true,\n        \"last_payment_applied_at\": \"2024-03-20T10:00:00Z\",\n        \"mc_number\": \"string\",\n        \"progress\": \"done\",\n        \"state\": \"string\",\n        \"status\": \"declined\"\n      },\n      \"debtor\": {\n        \"credit_limit\": 7662,\n        \"credit_used\": 7548,\n        \"net_terms\": 1016\n      },\n      \"payee\": {\n        \"factor_company_name\": \"string\",\n        \"id\": 2254\n      }\n    },\n    {\n      \"client_debtor_relationship\": {\n        \"average_dbt_past_60_days\": 19.091635123972274,\n        \"average_dso_past_60_days\": 2491.61071566247,\n        \"default_job_is_factored\": true,\n        \"id\": 3566,\n        \"net_terms\": 103,\n        \"noa_status\": \"viewed\",\n        \"status\": \"pending\"\n      },\n      \"client_payee_relationship\": {\n        \"contact_email\": \"string\",\n        \"days_to_pay_offset\": 5138,\n        \"id\": 8520\n      },\n      \"company\": {\n        \"city\": \"string\",\n        \"company_name\": \"string\",\n        \"dot_number\": \"string\",\n        \"ein\": \"string\",\n        \"id\": 4095,\n        \"is_debtor\": false,\n        \"is_factor\": false,\n        \"is_payee\": false,\n        \"last_payment_applied_at\": \"2024-03-20T10:00:00Z\",\n        \"mc_number\": \"string\",\n        \"progress\": \"done\",\n        \"state\": \"string\",\n        \"status\": \"pending\"\n      },\n      \"debtor\": {\n        \"credit_limit\": 7842,\n        \"credit_used\": 7473,\n        \"net_terms\": 7327\n      },\n      \"payee\": {\n        \"factor_company_name\": \"string\",\n        \"id\": 8661\n      }\n    }\n  ],\n  \"page\": 1813,\n  \"per_page\": 202,\n  \"total_pages\": 3624,\n  \"total_results\": 7915\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9a89a3a4-a6cf-43d3-aacc-1aed9bc0fdb9",
+          "name": "List Factoring Companies",
+          "request": {
+            "name": "List Factoring Companies",
+            "description": {
+              "content": "Returns a list of all Factoring companies established in Denim's database. Return structure is similar to paginated results, however this will always return all factoring companies in 1 page.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "companies",
+                "factors"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "318b5116-4715-4f97-818d-1e7abfd7e615",
+              "name": "Factoring company response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "companies",
+                    "factors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"company\": {\n        \"city\": \"string\",\n        \"company_name\": \"string\",\n        \"ein\": \"string\",\n        \"id\": 5451,\n        \"state\": \"string\"\n      }\n    },\n    {\n      \"company\": {\n        \"city\": \"string\",\n        \"company_name\": \"string\",\n        \"ein\": \"string\",\n        \"id\": 468,\n        \"state\": \"string\"\n      }\n    }\n  ],\n  \"page\": 2335,\n  \"per_page\": 879,\n  \"total_pages\": 4777,\n  \"total_results\": 4614\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://staging.denim.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "2341e2ae-f26b-426a-8943-aa92731455f9",
+    "name": "Denim Public API Reference Documentation Companies API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.\n\nContact Support:\n Name: Denim Engineering Team\n Email: engineering@denim.com",
+      "type": "text/plain"
+    }
+  }
+}

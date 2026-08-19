@@ -1,0 +1,601 @@
+{
+  "item": [
+    {
+      "id": "f71f0650-79ad-44ba-a8f7-1509fe55d3af",
+      "name": "Jobs V2",
+      "description": {
+        "content": "Version 2. A job is a collection of obligations (payables, receivables, and fees) associated with an invoice or purchase order.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "fcf69b0a-2c16-4da1-b1e9-311e9e8aef66",
+          "name": "List Jobs",
+          "request": {
+            "name": "List Jobs",
+            "description": {
+              "content": "A job is a collection of payables, receivables, and fees (obligations) associated with an invoice or purchase order.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "Search by company name, amount, or job number"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Job statuses"
+                },
+                {
+                  "disabled": false,
+                  "key": "needs_attention",
+                  "value": "<boolean>",
+                  "description": "When true, return only jobs that need attention: manual/admin flag OR actionable document-audit issue."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "The page of results to query."
+                },
+                {
+                  "disabled": false,
+                  "key": "per_page",
+                  "value": "<integer>",
+                  "description": "The number of entities per page of results."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "04d0fbc3-aaab-4277-a6c5-8dd067c994a5",
+              "name": "Jobs index response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "$1,000.00"
+                    },
+                    {
+                      "key": "status",
+                      "value": "approved"
+                    },
+                    {
+                      "key": "needs_attention",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"actionable_doc_audit_issue_count\": 0,\n      \"client_id\": 2,\n      \"company_id\": 3,\n      \"documents\": [\n        {\n          \"file_name\": \"1582558423630_a5993a13c2_embedded_jpeg_pdf.pdf\",\n          \"inserted_at\": \"2020-02-24T15:33:46\",\n          \"type\": \"billing_paperwork\",\n          \"url\": \"https://link-to-gcp-file.gcp.com\",\n          \"uuid\": \"3227bb84-6735-48c1-b8ea-4e7d09d1e07d\"\n        }\n      ],\n      \"is_approved\": true,\n      \"is_rejected\": false,\n      \"is_validated\": true,\n      \"is_verified\": true,\n      \"manual_needs_attention\": false,\n      \"needs_attention\": false,\n      \"notes\": \"There was a lumper fee\",\n      \"obligations\": [\n        {\n          \"amount_due\": 10000,\n          \"applied_amount\": 0,\n          \"client_debtor_relationship_id\": null,\n          \"client_payee_relationship_days_to_pay_offset\": null,\n          \"client_payee_relationship_id\": null,\n          \"company_id\": 2,\n          \"company_name\": \"Denim Logistics\",\n          \"discounted_days\": 0,\n          \"due_date\": \"2020-02-26T15:34:22Z\",\n          \"latest_entry\": null,\n          \"payment_status\": \"scheduled\",\n          \"reference_number\": \"\",\n          \"status\": \"approved\",\n          \"subtype\": \"advance\",\n          \"total_amount\": 10000,\n          \"type\": \"payable\"\n        },\n        {\n          \"amount_due\": 80000,\n          \"applied_amount\": 0,\n          \"client_debtor_relationship_id\": null,\n          \"client_payee_relationship_days_to_pay_offset\": 3,\n          \"client_payee_relationship_id\": 21,\n          \"company_id\": 45,\n          \"company_name\": \"Carrier LLC\",\n          \"discounted_days\": 0,\n          \"due_date\": \"2020-02-26T15:34:22Z\",\n          \"latest_entry\": null,\n          \"payment_status\": \"scheduled\",\n          \"reference_number\": \"\",\n          \"status\": \"approved\",\n          \"subtype\": \"advance\",\n          \"total_amount\": 80000,\n          \"type\": \"payable\",\n          \"uuid\": \"a5558b9f-21d1-44b3-ad35-d642c9dc9b4d\"\n        },\n        {\n          \"amount_due\": 2000,\n          \"applied_amount\": 0,\n          \"client_debtor_relationship_id\": null,\n          \"client_payee_relationship_days_to_pay_offset\": null,\n          \"client_payee_relationship_id\": null,\n          \"company_id\": 2,\n          \"company_name\": \"Denim Logistics\",\n          \"discounted_days\": 0,\n          \"due_date\": \"2020-03-26T04:00:00Z\",\n          \"latest_entry\": null,\n          \"payment_status\": \"expected\",\n          \"reference_number\": \"\",\n          \"status\": \"approved\",\n          \"subtype\": \"factoring_fee\",\n          \"total_amount\": 3000,\n          \"type\": \"earnings\",\n          \"uuid\": \"580a94ca-0920-4fd3-aac7-aad144b57995\"\n        },\n        {\n          \"amount_due\": 7000,\n          \"applied_amount\": 0,\n          \"client_debtor_relationship_id\": null,\n          \"client_payee_relationship_days_to_pay_offset\": null,\n          \"client_payee_relationship_id\": null,\n          \"company_id\": 2,\n          \"company_name\": \"Denim Logistics\",\n          \"discounted_days\": 0,\n          \"due_date\": \"2020-03-26T04:00:00Z\",\n          \"latest_entry\": {\n            \"inserted_at\": \"2020-03-24T04:00:00Z\",\n            \"type\": \"rebate_auto_giveback\",\n            \"uuid\": \"0a212a02-1623-4ea8-811c-db3da8e90f12\"\n          },\n          \"payment_status\": \"expected\",\n          \"reference_number\": \"\",\n          \"status\": \"approved\",\n          \"subtype\": \"rebate\",\n          \"total_amount\": 7000,\n          \"type\": \"payable\",\n          \"uuid\": \"740ecc52-77f5-461d-b7dd-a30266dbc8d0\"\n        },\n        {\n          \"amount_due\": 100000,\n          \"applied_amount\": 0,\n          \"client_debtor_relationship_id\": 30,\n          \"client_payee_relationship_days_to_pay_offset\": null,\n          \"client_payee_relationship_id\": null,\n          \"company_id\": 116,\n          \"company_name\": \"New Debtor\",\n          \"discounted_days\": 0,\n          \"due_date\": \"2020-03-26T04:00:00Z\",\n          \"latest_entry\": {\n            \"inserted_at\": \"2020-03-24T04:00:00Z\",\n            \"type\": \"payment_applied_to_obligation\",\n            \"uuid\": \"0a212a02-1623-4ea8-811c-db3da8e90f12\"\n          },\n          \"line_items\": [\n            {\n              \"amount\": 89000,\n              \"description\": \"Invoice Price\",\n              \"type\": \"base_amount\"\n            },\n            {\n              \"amount\": 9000,\n              \"description\": \"Lumper Fee\",\n              \"type\": \"accessorial_fee\"\n            },\n            {\n              \"amount\": 2000,\n              \"description\": \"Fuel Surcharge\",\n              \"type\": \"accessorial_fee\"\n            }\n          ],\n          \"payment_status\": \"expected\",\n          \"reference_number\": \"\",\n          \"status\": \"approved\",\n          \"subtype\": \"primary\",\n          \"total_amount\": 100000,\n          \"type\": \"receivable\",\n          \"uuid\": \"a5c3a55e-a58a-40a0-9408-6cfbc89f7441\"\n        }\n      ],\n      \"reference_number\": \"test-123\",\n      \"status\": \"approved\",\n      \"status_message\": \"This job is approved\",\n      \"uuid\": \"06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6\"\n    }\n  ],\n  \"page\": 1,\n  \"per_page\": 2,\n  \"total_pages\": 3,\n  \"total_result\": 1\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3da8c296-4910-4af9-9884-e29da40b38ab",
+          "name": "Create a Job",
+          "request": {
+            "name": "Create a Job",
+            "description": {
+              "content": "Create a new Job using our V2 API. Jobs created with this API can have certain Denim relationship IDs ommitted in favor of external IDs. Clients will then be able to utilitze the Denim Dashboard to review these Jobs and complete any mappings as necessary. Once a mapping between an external ID and a Denim ID has been completed, it will not need to be mapped for future Jobs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<string>\",\n  \"is_factored\": \"<boolean>\",\n  \"job_reference_number\": \"<string>\",\n  \"notes\": \"<string>\",\n  \"payables\": [\n    {\n      \"allocated_receivables\": [\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"receivable_reference_number\": \"<string>\"\n        },\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"receivable_reference_number\": \"<string>\"\n        }\n      ],\n      \"documents\": [\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        },\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        }\n      ],\n      \"due_date\": \"<dateTime>\",\n      \"external_company_id\": \"<string>\",\n      \"external_company_mc_number\": \"<string>\",\n      \"external_company_name\": \"<string>\",\n      \"load\": {\n        \"external_resource_id\": \"<string>\",\n        \"is_hazmat\": \"<boolean>\",\n        \"is_team_load\": \"<boolean>\",\n        \"mode\": \"<string>\",\n        \"stops\": [\n          {\n            \"location\": {\n              \"address_line_1\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"address_line_2\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"city\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"country\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"state\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"zip_code\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            \"name\": \"<string>\",\n            \"stop_date\": \"<dateTime>\",\n            \"type\": \"<string>\"\n          },\n          {\n            \"location\": {\n              \"address_line_1\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"address_line_2\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"city\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"country\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"state\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"zip_code\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            \"name\": \"<string>\",\n            \"stop_date\": \"<dateTime>\",\n            \"type\": \"<string>\"\n          }\n        ],\n        \"vehicle\": {\n          \"length\": \"<number>\",\n          \"type\": \"<string>\",\n          \"unit\": \"<string>\"\n        }\n      },\n      \"obligation_date\": \"<dateTime>\",\n      \"reference_number\": \"<string>\",\n      \"relationship_id\": \"<integer>\",\n      \"total_amount\": \"<integer>\"\n    },\n    {\n      \"allocated_receivables\": [\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"receivable_reference_number\": \"<string>\"\n        },\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"receivable_reference_number\": \"<string>\"\n        }\n      ],\n      \"documents\": [\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        },\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        }\n      ],\n      \"due_date\": \"<dateTime>\",\n      \"external_company_id\": \"<string>\",\n      \"external_company_mc_number\": \"<string>\",\n      \"external_company_name\": \"<string>\",\n      \"load\": {\n        \"external_resource_id\": \"<string>\",\n        \"is_hazmat\": \"<boolean>\",\n        \"is_team_load\": \"<boolean>\",\n        \"mode\": \"<string>\",\n        \"stops\": [\n          {\n            \"location\": {\n              \"address_line_1\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"address_line_2\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"city\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"country\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"state\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"zip_code\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            \"name\": \"<string>\",\n            \"stop_date\": \"<dateTime>\",\n            \"type\": \"<string>\"\n          },\n          {\n            \"location\": {\n              \"address_line_1\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"address_line_2\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"city\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"country\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"state\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"zip_code\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            \"name\": \"<string>\",\n            \"stop_date\": \"<dateTime>\",\n            \"type\": \"<string>\"\n          }\n        ],\n        \"vehicle\": {\n          \"length\": \"<number>\",\n          \"type\": \"<string>\",\n          \"unit\": \"<string>\"\n        }\n      },\n      \"obligation_date\": \"<dateTime>\",\n      \"reference_number\": \"<string>\",\n      \"relationship_id\": \"<integer>\",\n      \"total_amount\": \"<integer>\"\n    }\n  ],\n  \"receivables\": [\n    {\n      \"allocated_payables\": [\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"payable_reference_number\": \"<string>\"\n        },\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"payable_reference_number\": \"<string>\"\n        }\n      ],\n      \"documents\": [\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        },\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        }\n      ],\n      \"due_date\": \"<dateTime>\",\n      \"external_company_id\": \"<string>\",\n      \"external_company_name\": \"<string>\",\n      \"line_items\": [\n        {\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"obligation_date\": \"<dateTime>\",\n      \"reference_number\": \"<string>\",\n      \"relationship_id\": \"<integer>\",\n      \"shipment\": {\n        \"destination\": {\n          \"location\": {\n            \"address_line_1\": \"<string>\",\n            \"address_line_2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"country\": \"<string>\",\n            \"state\": \"<string>\",\n            \"zip_code\": \"<string>\"\n          },\n          \"name\": \"<string>\"\n        },\n        \"dropoff_date\": {\n          \"actual_date\": \"<dateTime>\",\n          \"target_end_date\": \"<dateTime>\",\n          \"target_start_date\": \"<dateTime>\"\n        },\n        \"external_resource_id\": \"<string>\",\n        \"origin\": {\n          \"location\": {\n            \"address_line_1\": \"<string>\",\n            \"address_line_2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"country\": \"<string>\",\n            \"state\": \"<string>\",\n            \"zip_code\": \"<string>\"\n          },\n          \"name\": \"<string>\"\n        },\n        \"pickup_date\": {\n          \"actual_date\": \"<dateTime>\",\n          \"target_end_date\": \"<dateTime>\",\n          \"target_start_date\": \"<dateTime>\"\n        },\n        \"shipped_items\": [\n          {\n            \"description\": \"<string>\",\n            \"dimensions\": {\n              \"depth\": \"<number>\",\n              \"height\": \"<number>\",\n              \"unit\": \"<string>\",\n              \"width\": \"<number>\"\n            },\n            \"quantity\": \"<number>\",\n            \"unit\": \"<string>\",\n            \"weight\": \"<number>\"\n          },\n          {\n            \"description\": \"<string>\",\n            \"dimensions\": {\n              \"depth\": \"<number>\",\n              \"height\": \"<number>\",\n              \"unit\": \"<string>\",\n              \"width\": \"<number>\"\n            },\n            \"quantity\": \"<number>\",\n            \"unit\": \"<string>\",\n            \"weight\": \"<number>\"\n          }\n        ],\n        \"total_weight\": \"<number>\",\n        \"total_weight_unit\": \"<string>\"\n      },\n      \"total_amount\": \"<integer>\"\n    },\n    {\n      \"allocated_payables\": [\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"payable_reference_number\": \"<string>\"\n        },\n        {\n          \"allocated_cost\": \"<number>\",\n          \"allocated_revenue\": \"<number>\",\n          \"payable_reference_number\": \"<string>\"\n        }\n      ],\n      \"documents\": [\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        },\n        {\n          \"subtype\": \"<string>\",\n          \"type\": \"<string>\",\n          \"url\": \"<string>\"\n        }\n      ],\n      \"due_date\": \"<dateTime>\",\n      \"external_company_id\": \"<string>\",\n      \"external_company_name\": \"<string>\",\n      \"line_items\": [\n        {\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"obligation_date\": \"<dateTime>\",\n      \"reference_number\": \"<string>\",\n      \"relationship_id\": \"<integer>\",\n      \"shipment\": {\n        \"destination\": {\n          \"location\": {\n            \"address_line_1\": \"<string>\",\n            \"address_line_2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"country\": \"<string>\",\n            \"state\": \"<string>\",\n            \"zip_code\": \"<string>\"\n          },\n          \"name\": \"<string>\"\n        },\n        \"dropoff_date\": {\n          \"actual_date\": \"<dateTime>\",\n          \"target_end_date\": \"<dateTime>\",\n          \"target_start_date\": \"<dateTime>\"\n        },\n        \"external_resource_id\": \"<string>\",\n        \"origin\": {\n          \"location\": {\n            \"address_line_1\": \"<string>\",\n            \"address_line_2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"country\": \"<string>\",\n            \"state\": \"<string>\",\n            \"zip_code\": \"<string>\"\n          },\n          \"name\": \"<string>\"\n        },\n        \"pickup_date\": {\n          \"actual_date\": \"<dateTime>\",\n          \"target_end_date\": \"<dateTime>\",\n          \"target_start_date\": \"<dateTime>\"\n        },\n        \"shipped_items\": [\n          {\n            \"description\": \"<string>\",\n            \"dimensions\": {\n              \"depth\": \"<number>\",\n              \"height\": \"<number>\",\n              \"unit\": \"<string>\",\n              \"width\": \"<number>\"\n            },\n            \"quantity\": \"<number>\",\n            \"unit\": \"<string>\",\n            \"weight\": \"<number>\"\n          },\n          {\n            \"description\": \"<string>\",\n            \"dimensions\": {\n              \"depth\": \"<number>\",\n              \"height\": \"<number>\",\n              \"unit\": \"<string>\",\n              \"width\": \"<number>\"\n            },\n            \"quantity\": \"<number>\",\n            \"unit\": \"<string>\",\n            \"weight\": \"<number>\"\n          }\n        ],\n        \"total_weight\": \"<number>\",\n        \"total_weight_unit\": \"<string>\"\n      },\n      \"total_amount\": \"<integer>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6e5a5f6b-944f-49d2-93b2-a0c9b2ace538",
+              "name": "New Job",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"summary\": \"Create a factored job with both payable and receivable\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"company_id\": 784,\n    \"documents\": [\n      {\n        \"subtype\": \"proof_of_work\",\n        \"type\": \"billing_paperwork\",\n        \"url\": \"https://example.com/samples/sample_files/sample_document.pdf\"\n      },\n      {\n        \"subtype\": \"invoice\",\n        \"type\": \"supporting_paperwork\",\n        \"url\": \"https://example.com/samples/sample_files/sample_document.pdf\"\n      }\n    ],\n    \"is_factored\": true,\n    \"obligations\": [\n      {\n        \"client_debtor_relationship_id\": null,\n        \"client_payee_relationship_id\": 21,\n        \"company_id\": 45,\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-02-26T15:34:22Z\",\n        \"obligation_date\": \"2020-01-26T15:34:22Z\",\n        \"reference_number\": \"\",\n        \"subtype\": \"primary\",\n        \"total_amount\": 80000,\n        \"type\": \"payable\"\n      },\n      {\n        \"client_debtor_relationship_id\": 30,\n        \"client_payee_relationship_id\": null,\n        \"company_id\": 116,\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-03-26T04:00:00Z\",\n        \"line_items\": [\n          {\n            \"amount\": 89000,\n            \"description\": \"Invoice Price\",\n            \"type\": \"base_amount\"\n          },\n          {\n            \"amount\": 9000,\n            \"description\": \"Lumper Fee\",\n            \"type\": \"accessorial_fee\"\n          },\n          {\n            \"amount\": 2000,\n            \"description\": \"Fuel Surcharge\",\n            \"type\": \"accessorial_fee\"\n          }\n        ],\n        \"obligation_date\": \"2020-02-26T04:00:00Z\",\n        \"reference_number\": \"\",\n        \"subtype\": \"primary\",\n        \"total_amount\": 100000,\n        \"type\": \"receivable\"\n      }\n    ],\n    \"reference_number\": \"test-123\",\n    \"status\": \"pending\",\n    \"status_message\": null,\n    \"uuid\": \"3227bb84-6735-48c1-b8ea-4e7d09d1e07d\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5e3371e6-d76d-4b2c-96d5-907bce540033",
+          "name": "Show a Job by ID",
+          "request": {
+            "name": "Show a Job by ID",
+            "description": {
+              "content": "Returns a Job by UUID. This can return either a Job or a Job in Import Review. If the Job has been created, it will return a Job. If the Job has not yet been sumitted as a draft job and is under client_review, this will return a slimmer Job schema.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "jobs",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) Job UUID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4b7c0a2f-6393-47bd-aebb-579cb720aa80",
+              "name": "Job Record",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Job UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"actionable_doc_audit_issue_count\": 0,\n    \"client_id\": 2,\n    \"company_id\": 3,\n    \"documents\": [\n      {\n        \"file_name\": \"1582558423630_a5993a13c2_embedded_jpeg_pdf.pdf\",\n        \"inserted_at\": \"2020-02-24T15:33:46\",\n        \"type\": \"billing_paperwork\",\n        \"url\": \"https://link-to-gcp-file.gcp.com\",\n        \"uuid\": \"3227bb84-6735-48c1-b8ea-4e7d09d1e07d\"\n      }\n    ],\n    \"is_approved\": true,\n    \"is_rejected\": false,\n    \"is_validated\": true,\n    \"is_verified\": true,\n    \"manual_needs_attention\": false,\n    \"needs_attention\": false,\n    \"notes\": \"There was a lumper fee\",\n    \"obligations\": [\n      {\n        \"amount_due\": 10000,\n        \"applied_amount\": 0,\n        \"client_debtor_relationship_id\": null,\n        \"client_payee_relationship_id\": null,\n        \"company_id\": 2,\n        \"company_name\": \"Denim Logistics\",\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-02-26T15:34:22Z\",\n        \"payment_details\": {},\n        \"payment_status\": \"scheduled\",\n        \"reference_number\": \"\",\n        \"status\": \"approved\",\n        \"subtype\": \"advance\",\n        \"total_amount\": 10000,\n        \"type\": \"payable\"\n      },\n      {\n        \"amount_due\": 80000,\n        \"applied_amount\": 0,\n        \"client_debtor_relationship_id\": null,\n        \"client_payee_relationship_id\": 21,\n        \"company_id\": 45,\n        \"company_name\": \"Carrier LLC\",\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-02-26T15:34:22Z\",\n        \"payment_details\": {},\n        \"payment_status\": \"scheduled\",\n        \"reference_number\": \"\",\n        \"status\": \"approved\",\n        \"subtype\": \"advance\",\n        \"total_amount\": 80000,\n        \"type\": \"payable\",\n        \"uuid\": \"a5558b9f-21d1-44b3-ad35-d642c9dc9b4d\"\n      },\n      {\n        \"amount_due\": 2000,\n        \"applied_amount\": 0,\n        \"client_debtor_relationship_id\": null,\n        \"client_payee_relationship_id\": null,\n        \"company_id\": 2,\n        \"company_name\": \"Denim Logistics\",\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-03-26T04:00:00Z\",\n        \"payment_details\": {},\n        \"payment_status\": \"expected\",\n        \"reference_number\": \"\",\n        \"status\": \"approved\",\n        \"subtype\": \"factoring_fee\",\n        \"total_amount\": 3000,\n        \"type\": \"earnings\",\n        \"uuid\": \"580a94ca-0920-4fd3-aac7-aad144b57995\"\n      },\n      {\n        \"amount_due\": 7000,\n        \"applied_amount\": 0,\n        \"client_debtor_relationship_id\": null,\n        \"client_payee_relationship_id\": null,\n        \"company_id\": 2,\n        \"company_name\": \"Denim Logistics\",\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-03-26T04:00:00Z\",\n        \"payment_details\": {},\n        \"payment_status\": \"expected\",\n        \"reference_number\": \"\",\n        \"status\": \"approved\",\n        \"subtype\": \"rebate\",\n        \"total_amount\": 7000,\n        \"type\": \"payable\",\n        \"uuid\": \"740ecc52-77f5-461d-b7dd-a30266dbc8d0\"\n      },\n      {\n        \"amount_due\": 100000,\n        \"applied_amount\": 0,\n        \"client_debtor_relationship_id\": 30,\n        \"client_payee_relationship_id\": null,\n        \"company_id\": 116,\n        \"company_name\": \"New Debtor\",\n        \"discounted_days\": 0,\n        \"due_date\": \"2020-03-26T04:00:00Z\",\n        \"line_items\": [\n          {\n            \"amount\": 89000,\n            \"description\": \"Invoice Price\",\n            \"type\": \"base_amount\"\n          },\n          {\n            \"amount\": 9000,\n            \"description\": \"Lumper Fee\",\n            \"type\": \"accessorial_fee\"\n          },\n          {\n            \"amount\": 2000,\n            \"description\": \"Fuel Surcharge\",\n            \"type\": \"accessorial_fee\"\n          }\n        ],\n        \"payment_details\": {\n          \"account_name\": \"Bank Account Name\",\n          \"account_number\": \"X7890\",\n          \"account_type\": \"checking\"\n        },\n        \"payment_status\": \"fully_paid\",\n        \"reference_number\": \"\",\n        \"status\": \"approved\",\n        \"subtype\": \"primary\",\n        \"total_amount\": 100000,\n        \"type\": \"receivable\",\n        \"uuid\": \"a5c3a55e-a58a-40a0-9408-6cfbc89f7441\"\n      }\n    ],\n    \"reference_number\": \"test-123\",\n    \"status\": \"approved\",\n    \"status_message\": \"This job is approved\",\n    \"uuid\": \"06f9eccc-e5df-44ce-ba68-d4ccbdbc33e6\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cccd569f-db07-4756-898e-c6c72b66fbcf",
+          "name": "Create a Job Document",
+          "request": {
+            "name": "Create a Job Document",
+            "description": {
+              "content": "This endpoint enables adding documents to existing jobs. This can accept either a json body with a publicly accessible `url`, `type` and `subtype`, or a multi-part form body including a `file` as the binary and `type` and `subtype`. In either case, the document will be uploaded and stored to our secure Google Cloud Platform storage.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "jobs",
+                ":job_id",
+                "document"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) Job UUID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "Multi-part file upload of document."
+                },
+                {
+                  "key": "subtype",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "Billing or supporting paperwork subtype. Optional (This can only be one of purchase_order,proof_of_work,invoice)"
+                },
+                {
+                  "key": "type",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier. (This can only be one of billing_paperwork,supporting_paperwork)"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3b7d5660-faba-41ed-ab29-61aad538486d",
+              "name": "No Content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "jobs",
+                    ":job_id",
+                    "document"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Job UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "Multi-part file upload of document.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Billing or supporting paperwork subtype. Optional (This can only be one of purchase_order,proof_of_work,invoice)",
+                        "type": "text/plain"
+                      },
+                      "key": "subtype",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Billing paperwork gets sent to debtor. Supporting paperwork allows us to pay the carrier. (This can only be one of billing_paperwork,supporting_paperwork)",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://staging.denim.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7ccaf588-28d7-4b06-90d1-14948a54447d",
+    "name": "Denim Public API Reference Documentation Companies Jobs V2 API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.\n\nContact Support:\n Name: Denim Engineering Team\n Email: engineering@denim.com",
+      "type": "text/plain"
+    }
+  }
+}

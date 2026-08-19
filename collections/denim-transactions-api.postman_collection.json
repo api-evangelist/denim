@@ -1,0 +1,209 @@
+{
+  "item": [
+    {
+      "id": "7815e3e8-d83b-4313-b4fc-96271c7a6baf",
+      "name": "Transactions",
+      "description": {
+        "content": "Transactions are payments incoming, outgoing, netting, and adjustments. Transactions are are generally applied towards obligations.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9c1fc4c3-1145-4700-8ad5-c36675e9222d",
+          "name": "List Transactions",
+          "request": {
+            "name": "List Transactions",
+            "description": {
+              "content": "Transactions are payments incoming, outgoing, netting, and adjustments. Transactions are are generally applied towards obligations.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "transactions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "Search by company name, amount, reference, or description"
+                },
+                {
+                  "disabled": false,
+                  "key": "start_date",
+                  "value": "<string>",
+                  "description": "Filter transactions after date in YYYY-MM-DD format"
+                },
+                {
+                  "disabled": false,
+                  "key": "end_date",
+                  "value": "<string>",
+                  "description": "Filter transactions before date in YYYY-MM-DD format"
+                },
+                {
+                  "disabled": false,
+                  "key": "transaction_owner",
+                  "value": "<string>",
+                  "description": "Enum type to help filter payments by who made them. One of [all, payee, debtor, client]."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "The page of results to query."
+                },
+                {
+                  "disabled": false,
+                  "key": "per_page",
+                  "value": "<integer>",
+                  "description": "The number of entities per page of results."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3efafb31-fd6c-4a4d-80ca-900c69b7d153",
+              "name": "Transaction response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "transactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "$1,000.00"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2020-12-25"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "2021-01-31"
+                    },
+                    {
+                      "key": "transaction_owner",
+                      "value": "payee"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"applied_transactions\": [\n        {\n          \"amount_due\": 0,\n          \"applied_amount\": 100000,\n          \"company_name\": \"Shipper Co\",\n          \"job_number\": \"test-scheduled-2\",\n          \"payment_status\": \"fully_paid\",\n          \"subtype\": \"primary\",\n          \"total_amount\": 100000,\n          \"type\": \"receivable\"\n        }\n      ],\n      \"company_id\": 44,\n      \"company_name\": \"Shipper Co\",\n      \"description\": \"payment from shipper\",\n      \"method\": \"ach\",\n      \"reference_number\": \"123\",\n      \"total_amount\": 100000,\n      \"transaction_date\": \"2020-10-15T16:00:00Z\",\n      \"transaction_metadata\": {\n        \"payment_details\": {\n          \"account_name\": \"Shipper Co\",\n          \"account_number\": \"X1234\",\n          \"address_line_1\": null,\n          \"address_line_2\": null,\n          \"city\": null,\n          \"country\": null,\n          \"state\": null,\n          \"zip_code\": null\n        },\n        \"payment_type\": \"bank\",\n        \"to_factor\": false,\n        \"transfer_method\": \"ach\"\n      },\n      \"type\": \"incoming\",\n      \"uuid\": \"6b7e349e-ff53-42ec-8e99-47f1cb3aeea0\",\n      \"version\": 0\n    }\n  ],\n  \"page\": 1,\n  \"per_page\": 2,\n  \"total_pages\": 3\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://staging.denim.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "162b995a-97a6-488b-9565-fc91ec819448",
+    "name": "Denim Public API Reference Documentation Companies Transactions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.\n\nContact Support:\n Name: Denim Engineering Team\n Email: engineering@denim.com",
+      "type": "text/plain"
+    }
+  }
+}
