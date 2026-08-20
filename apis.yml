@@ -85,6 +85,8 @@ apis:
   humanURL: https://app.denim.com/api/v1/documentation
   baseURL: https://app.denim.com/api
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -134,6 +136,8 @@ apis:
   humanURL: https://app.denim.com/api/v1/documentation
   baseURL: https://app.denim.com/api
   tags:
+  - Transaction
+  tags_raw:
   - Transactions
   properties:
   - type: OpenAPI
