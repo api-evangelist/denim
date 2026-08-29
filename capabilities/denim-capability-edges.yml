@@ -1,0 +1,26 @@
+slug: denim
+provider: Denim
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Transportation & Logistics
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Jobs V2
+  spec_file: denim-jobs-v2-api-openapi.yml
+  capability_id: BC-2530
+  capability_id_l1: BC-2530
+  capability_name: Freight Billing & Settlement Management
+  confidence: 0.7
+  evidence: POST /api/v2/jobs  Create a Job; schemas Receivable_Obligation, Payable_Obligation, Shipment_details,
+    Load_details, Obligation_Document
+  reason: The v2 job explicitly carries receivable and payable obligations against shipment/load details,
+    i.e. billing the shipper and paying the carrier for a freight movement. L2 omitted because both invoicing
+    and carrier payment are in scope.
