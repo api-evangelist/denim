@@ -1,11 +1,11 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
   contact:
     email: engineering@denim.com
     name: Denim Engineering Team
     url: https://www.denim.com
   description: The Denim Public API can be used by 3rd parties to sync companies, debtor relationships, payee relationships, and create invoices within Denim's payment platform. This enables streamlined operations and job invoice data between transportation management systems and Denim.
-  title: Denim Public API Reference Documentation Companies Debtors API
+  title: Denim Public API Reference Documentation Debtors API
   version: 1.0.0
   x-logo:
     altText: Denim
@@ -172,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Debtor Index Response'
+                $ref: '#/components/schemas/Debtor_Index_Response'
           description: Debtor relationship response
       security:
       - api_key: []
@@ -217,7 +217,7 @@ paths:
                     invoicing_email: invoicing@newcompany.com
                     phone_number: '12025348399'
             schema:
-              $ref: '#/components/schemas/Debtor Create'
+              $ref: '#/components/schemas/Debtor_Create'
         description: Creating Client-Debtor Relationship params
         required: false
       responses:
@@ -225,7 +225,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Debtor Create Response'
+                $ref: '#/components/schemas/Debtor_Create_Response'
           description: Debtor relationship created response
       security:
       - api_key: []
@@ -234,57 +234,110 @@ paths:
       - Debtors
 components:
   schemas:
-    Debtor:
-      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+    Debtor_Company:
+      description: A debtor company
       properties:
-        credit_limit:
-          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
-          nullable: true
-          type: integer
-        credit_used:
-          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
-          nullable: true
-          type: integer
-        net_terms:
-          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
-          nullable: true
-          type: integer
-      title: Debtor
-      type: object
-    Debtor Create:
-      description: Use the company search API to link to an existing approved debtor  or send the `company` parameters to create a new debtor.
-      example:
-        company:
-          address_line_1: 1 Fifth Avenue
-          address_line_2: 'PH #9'
-          city: New York
-          company_name: New Customer LLC
-          country: USA
-          dot_number: null
-          ein: '123456789'
-          freight_forwarder_number: '123456'
-          mc_number: null
-          state: NY
-          website: www.newcompany.com
-          zip_code: '11111'
-        credit_request:
-          credit_amount: 500000
-          invoicing_email: invoicing@newcompany.com
-          phone_number: '12025348399'
-      properties:
-        company:
-          $ref: '#/components/schemas/Debtor Company'
-        company_id:
+        address_line_1:
+          description: Address Line 1
+          type: string
+        address_line_2:
+          description: Address Line 2
+          type: string
+        city:
+          description: City
+          type: string
+        company_name:
+          description: Debtor company name
+          type: string
+        country:
+          default: USA
+          description: Country (3 character abbreviation)
+          enum:
+          - USA
+          - CAN
+          type: string
+        dot_number:
+          description: DOT Number (Department of Transportation Number)
+          type:
+          - string
+          - 'null'
+        ein:
+          description: Federal EIN / Tax ID (9 digits)
+          type:
+          - string
+          - 'null'
+        freight_forwarder_number:
+          description: Freight Forwarder Number
+          type:
+          - string
+          - 'null'
+        id:
           description: Company ID
           type: integer
-        credit_request:
-          $ref: '#/components/schemas/Debtor Company Credit Request'
+        mc_number:
+          description: FMCSA Motor Carrier Number (6-8 digits)
+          type:
+          - string
+          - 'null'
+        state:
+          description: State (2 Character Abbreviation)
+          type: string
+        website:
+          description: Website URL
+          type:
+          - string
+          - 'null'
+        zip_code:
+          description: Zip Code
+          type: string
       required:
-      - name
-      - email
-      title: Debtor Create
+      - company_name
+      title: Debtor Company
       type: object
-    Debtor Index Response:
+    Client-Debtor_Relationship:
+      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
+      properties:
+        average_dbt_past_60_days:
+          description: Average Days Beyond Terms
+          type:
+          - number
+          - 'null'
+        average_dso_past_60_days:
+          description: Average Days Sales Outstanding (DSO) in the past 60 days
+          type:
+          - number
+          - 'null'
+        default_job_is_factored:
+          description: Whether new jobs for this debtor default to factored funding.
+          type:
+          - boolean
+          - 'null'
+        id:
+          description: usable as `client_debtor_relationship_id`
+          type: integer
+        net_terms:
+          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
+          type:
+          - integer
+          - 'null'
+        noa_status:
+          description: Notice-of-Assignment status for the relationship.
+          enum:
+          - pending_delivery
+          - delivered
+          - viewed
+          - confirmed
+          type: string
+        status:
+          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
+          enum:
+          - pending
+          - approved
+          - rejected
+          type: string
+      title: Client-Debtor Relationship
+      type: object
+    Debtor_Index_Response:
       description: Response schema for fetching debtor relationships
       example:
         data:
@@ -355,9 +408,9 @@ components:
           items:
             properties:
               client_debtor_relationship:
-                $ref: '#/components/schemas/Client-Debtor Relationship'
+                $ref: '#/components/schemas/Client-Debtor_Relationship'
               company:
-                $ref: '#/components/schemas/Debtor Company'
+                $ref: '#/components/schemas/Debtor_Company'
               debtor:
                 $ref: '#/components/schemas/Debtor'
             type: object
@@ -376,7 +429,60 @@ components:
           type: integer
       title: Debtor Index Response
       type: object
-    Debtor Create Response:
+    Debtor_Create:
+      description: Use the company search API to link to an existing approved debtor  or send the `company` parameters to create a new debtor.
+      example:
+        company:
+          address_line_1: 1 Fifth Avenue
+          address_line_2: 'PH #9'
+          city: New York
+          company_name: New Customer LLC
+          country: USA
+          dot_number: null
+          ein: '123456789'
+          freight_forwarder_number: '123456'
+          mc_number: null
+          state: NY
+          website: www.newcompany.com
+          zip_code: '11111'
+        credit_request:
+          credit_amount: 500000
+          invoicing_email: invoicing@newcompany.com
+          phone_number: '12025348399'
+      properties:
+        company:
+          $ref: '#/components/schemas/Debtor_Company'
+        company_id:
+          description: Company ID
+          type: integer
+        credit_request:
+          $ref: '#/components/schemas/Debtor_Company_Credit_Request'
+      required:
+      - name
+      - email
+      title: Debtor Create
+      type: object
+    Debtor:
+      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+      properties:
+        credit_limit:
+          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
+          type:
+          - integer
+          - 'null'
+        credit_used:
+          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
+          type:
+          - integer
+          - 'null'
+        net_terms:
+          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
+          type:
+          - integer
+          - 'null'
+      title: Debtor
+      type: object
+    Debtor_Create_Response:
       description: Response schema for creating a new debtor relationship
       example:
         data:
@@ -415,15 +521,15 @@ components:
         data:
           properties:
             client_debtor_relationship:
-              $ref: '#/components/schemas/Client-Debtor Relationship'
+              $ref: '#/components/schemas/Client-Debtor_Relationship'
             company:
-              $ref: '#/components/schemas/Debtor Company'
+              $ref: '#/components/schemas/Debtor_Company'
             debtor:
               $ref: '#/components/schemas/Debtor'
           type: object
       title: Debtor Create Response
       type: object
-    Debtor Company Credit Request:
+    Debtor_Company_Credit_Request:
       description: Credit request for a new debtor company
       properties:
         credit_amount:
@@ -436,100 +542,6 @@ components:
           description: Invoicing phone number
           type: string
       title: Debtor Company Credit Request
-      type: object
-    Client-Debtor Relationship:
-      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
-      properties:
-        average_dbt_past_60_days:
-          description: Average Days Beyond Terms
-          nullable: true
-          type: number
-        average_dso_past_60_days:
-          description: Average Days Sales Outstanding (DSO) in the past 60 days
-          nullable: true
-          type: number
-        default_job_is_factored:
-          description: Whether new jobs for this debtor default to factored funding.
-          nullable: true
-          type: boolean
-        id:
-          description: usable as `client_debtor_relationship_id`
-          type: integer
-        net_terms:
-          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
-          nullable: true
-          type: integer
-        noa_status:
-          description: Notice-of-Assignment status for the relationship.
-          enum:
-          - pending_delivery
-          - delivered
-          - viewed
-          - confirmed
-          type: string
-        status:
-          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
-          enum:
-          - pending
-          - approved
-          - rejected
-          type: string
-      title: Client-Debtor Relationship
-      type: object
-    Debtor Company:
-      description: A debtor company
-      properties:
-        address_line_1:
-          description: Address Line 1
-          type: string
-        address_line_2:
-          description: Address Line 2
-          type: string
-        city:
-          description: City
-          type: string
-        company_name:
-          description: Debtor company name
-          type: string
-        country:
-          default: USA
-          description: Country (3 character abbreviation)
-          enum:
-          - USA
-          - CAN
-          type: string
-        dot_number:
-          description: DOT Number (Department of Transportation Number)
-          nullable: true
-          type: string
-        ein:
-          description: Federal EIN / Tax ID (9 digits)
-          nullable: true
-          type: string
-        freight_forwarder_number:
-          description: Freight Forwarder Number
-          nullable: true
-          type: string
-        id:
-          description: Company ID
-          type: integer
-        mc_number:
-          description: FMCSA Motor Carrier Number (6-8 digits)
-          nullable: true
-          type: string
-        state:
-          description: State (2 Character Abbreviation)
-          type: string
-        website:
-          description: Website URL
-          nullable: true
-          type: string
-        zip_code:
-          description: Zip Code
-          type: string
-      required:
-      - company_name
-      title: Debtor Company
       type: object
   securitySchemes:
     api_key:

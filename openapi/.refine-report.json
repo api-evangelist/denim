@@ -1,12 +1,7 @@
 {
   "provider": "denim",
   "sources": [
-    "denim-companies-api-openapi.yml",
-    "denim-debtors-api-openapi.yml",
-    "denim-jobs-api-openapi.yml",
-    "denim-jobs-v2-api-openapi.yml",
-    "denim-payees-api-openapi.yml",
-    "denim-transactions-api-openapi.yml"
+    "_original/denim-openapi-original.json"
   ],
   "outputs": [
     "denim-companies-api-openapi.yml",
@@ -19,6 +14,17 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "denim-openapi-original.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0; renamed 71 component key(s) illegal in 3.x (e.g. Add a document to a job)",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "denim-companies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "denim-debtors-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "denim-jobs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "denim-jobs-v2-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "denim-payees-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "denim-transactions-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
