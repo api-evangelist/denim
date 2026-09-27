@@ -31,7 +31,7 @@ paths:
       externalDocs:
         description: 'API Integration Guides: Mapping and Syncing Companies'
         url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
-      operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index (2)
+      operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index(2)
       parameters:
       - description: Search string for debtor company name or MC Number.
         example: ABC Shipping Company
@@ -179,13 +179,15 @@ paths:
       summary: List Client-Debtor Relationships
       tags:
       - Debtors
+      x-operation-id-source: normalized
+      x-operation-id-original: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.index (2)
     post:
       callbacks: {}
       description: You can create a debtor relationship by linking to an existing approved company in our system (preferred) by passing the company_id found using the GET/companies endpoint. Alternatively, you can create a new company and client-debtor relationship simultaneously by sending the company attributes. Note that all credit requests are reviewed by our operations team for approval.
       externalDocs:
         description: 'API Integration Guides: Mapping and Syncing Companies'
         url: https://help.denim.com/hc/en-us/articles/9403899854107-4-Mapping-and-Syncing-Companies
-      operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create (2)
+      operationId: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create(2)
       parameters: []
       requestBody:
         content:
@@ -232,8 +234,73 @@ paths:
       summary: Create new Client-Debtor Relationship
       tags:
       - Debtors
+      x-operation-id-source: normalized
+      x-operation-id-original: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create (2)
 components:
   schemas:
+    Client-Debtor_Relationship:
+      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
+      properties:
+        average_dbt_past_60_days:
+          description: Average Days Beyond Terms
+          type:
+          - number
+          - 'null'
+        average_dso_past_60_days:
+          description: Average Days Sales Outstanding (DSO) in the past 60 days
+          type:
+          - number
+          - 'null'
+        default_job_is_factored:
+          description: Whether new jobs for this debtor default to factored funding.
+          type:
+          - boolean
+          - 'null'
+        id:
+          description: usable as `client_debtor_relationship_id`
+          type: integer
+        net_terms:
+          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
+          type:
+          - integer
+          - 'null'
+        noa_status:
+          description: Notice-of-Assignment status for the relationship.
+          enum:
+          - pending_delivery
+          - delivered
+          - viewed
+          - confirmed
+          type: string
+        status:
+          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
+          enum:
+          - pending
+          - approved
+          - rejected
+          type: string
+      title: Client-Debtor Relationship
+      type: object
+    Debtor:
+      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+      properties:
+        credit_limit:
+          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
+          type:
+          - integer
+          - 'null'
+        credit_used:
+          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
+          type:
+          - integer
+          - 'null'
+        net_terms:
+          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
+          type:
+          - integer
+          - 'null'
+      title: Debtor
+      type: object
     Debtor_Company:
       description: A debtor company
       properties:
@@ -293,49 +360,6 @@ components:
       required:
       - company_name
       title: Debtor Company
-      type: object
-    Client-Debtor_Relationship:
-      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
-      properties:
-        average_dbt_past_60_days:
-          description: Average Days Beyond Terms
-          type:
-          - number
-          - 'null'
-        average_dso_past_60_days:
-          description: Average Days Sales Outstanding (DSO) in the past 60 days
-          type:
-          - number
-          - 'null'
-        default_job_is_factored:
-          description: Whether new jobs for this debtor default to factored funding.
-          type:
-          - boolean
-          - 'null'
-        id:
-          description: usable as `client_debtor_relationship_id`
-          type: integer
-        net_terms:
-          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
-          type:
-          - integer
-          - 'null'
-        noa_status:
-          description: Notice-of-Assignment status for the relationship.
-          enum:
-          - pending_delivery
-          - delivered
-          - viewed
-          - confirmed
-          type: string
-        status:
-          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
-          enum:
-          - pending
-          - approved
-          - rejected
-          type: string
-      title: Client-Debtor Relationship
       type: object
     Debtor_Index_Response:
       description: Response schema for fetching debtor relationships
@@ -461,26 +485,6 @@ components:
       - name
       - email
       title: Debtor Create
-      type: object
-    Debtor:
-      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
-      properties:
-        credit_limit:
-          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
-          type:
-          - integer
-          - 'null'
-        credit_used:
-          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
-          type:
-          - integer
-          - 'null'
-        net_terms:
-          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
-          type:
-          - integer
-          - 'null'
-      title: Debtor
       type: object
     Debtor_Create_Response:
       description: Response schema for creating a new debtor relationship
