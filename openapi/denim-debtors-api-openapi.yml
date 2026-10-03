@@ -238,6 +238,20 @@ paths:
       x-operation-id-original: AxlePayWeb.Api.V1.ClientDebtorRelationshipController.create (2)
 components:
   schemas:
+    Debtor_Company_Credit_Request:
+      description: Credit request for a new debtor company
+      properties:
+        credit_amount:
+          description: Request amount in cents
+          type: integer
+        invoicing_email:
+          description: Invoicing email
+          type: string
+        phone_number:
+          description: Invoicing phone number
+          type: string
+      title: Debtor Company Credit Request
+      type: object
     Client-Debtor_Relationship:
       description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
       properties:
@@ -280,26 +294,6 @@ components:
           - rejected
           type: string
       title: Client-Debtor Relationship
-      type: object
-    Debtor:
-      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
-      properties:
-        credit_limit:
-          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
-          type:
-          - integer
-          - 'null'
-        credit_used:
-          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
-          type:
-          - integer
-          - 'null'
-        net_terms:
-          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
-          type:
-          - integer
-          - 'null'
-      title: Debtor
       type: object
     Debtor_Company:
       description: A debtor company
@@ -360,6 +354,53 @@ components:
       required:
       - company_name
       title: Debtor Company
+      type: object
+    Debtor_Create_Response:
+      description: Response schema for creating a new debtor relationship
+      example:
+        data:
+          client_debtor_relationship:
+            average_dbt_past_60_days: null
+            average_dso_past_60_days: null
+            credit_limit: 500000
+            credit_used: 200000
+            default_job_is_factored: true
+            id: 3
+            net_terms: 30
+            no_buy_status: false
+            noa_status: pending_delivery
+            open_aging: 0
+            open_chargebacks: 0
+            overall_status: noa_pending_delivery
+            status: pending
+          company:
+            address_line_1: 1 Fifth Ave.
+            address_line_2: 'PH #9'
+            city: New York
+            company_name: ABC Shipping Company
+            country: USA
+            dot_number: '1234567'
+            ein: '123456789'
+            freight_forwarder_number: '123456'
+            id: 74
+            mc_number: '12345678'
+            state: NY
+            website: www.abcshipping.com
+            zip_code: '11111'
+          debtor:
+            credit_limit: null
+            credit_used: null
+      properties:
+        data:
+          properties:
+            client_debtor_relationship:
+              $ref: '#/components/schemas/Client-Debtor_Relationship'
+            company:
+              $ref: '#/components/schemas/Debtor_Company'
+            debtor:
+              $ref: '#/components/schemas/Debtor'
+          type: object
+      title: Debtor Create Response
       type: object
     Debtor_Index_Response:
       description: Response schema for fetching debtor relationships
@@ -453,6 +494,26 @@ components:
           type: integer
       title: Debtor Index Response
       type: object
+    Debtor:
+      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+      properties:
+        credit_limit:
+          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
+          type:
+          - integer
+          - 'null'
+        credit_used:
+          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
+          type:
+          - integer
+          - 'null'
+        net_terms:
+          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
+          type:
+          - integer
+          - 'null'
+      title: Debtor
+      type: object
     Debtor_Create:
       description: Use the company search API to link to an existing approved debtor  or send the `company` parameters to create a new debtor.
       example:
@@ -485,67 +546,6 @@ components:
       - name
       - email
       title: Debtor Create
-      type: object
-    Debtor_Create_Response:
-      description: Response schema for creating a new debtor relationship
-      example:
-        data:
-          client_debtor_relationship:
-            average_dbt_past_60_days: null
-            average_dso_past_60_days: null
-            credit_limit: 500000
-            credit_used: 200000
-            default_job_is_factored: true
-            id: 3
-            net_terms: 30
-            no_buy_status: false
-            noa_status: pending_delivery
-            open_aging: 0
-            open_chargebacks: 0
-            overall_status: noa_pending_delivery
-            status: pending
-          company:
-            address_line_1: 1 Fifth Ave.
-            address_line_2: 'PH #9'
-            city: New York
-            company_name: ABC Shipping Company
-            country: USA
-            dot_number: '1234567'
-            ein: '123456789'
-            freight_forwarder_number: '123456'
-            id: 74
-            mc_number: '12345678'
-            state: NY
-            website: www.abcshipping.com
-            zip_code: '11111'
-          debtor:
-            credit_limit: null
-            credit_used: null
-      properties:
-        data:
-          properties:
-            client_debtor_relationship:
-              $ref: '#/components/schemas/Client-Debtor_Relationship'
-            company:
-              $ref: '#/components/schemas/Debtor_Company'
-            debtor:
-              $ref: '#/components/schemas/Debtor'
-          type: object
-      title: Debtor Create Response
-      type: object
-    Debtor_Company_Credit_Request:
-      description: Credit request for a new debtor company
-      properties:
-        credit_amount:
-          description: Request amount in cents
-          type: integer
-        invoicing_email:
-          description: Invoicing email
-          type: string
-        phone_number:
-          description: Invoicing phone number
-          type: string
-      title: Debtor Company Credit Request
       type: object
   securitySchemes:
     api_key:

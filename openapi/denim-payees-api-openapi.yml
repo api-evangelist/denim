@@ -262,93 +262,6 @@ paths:
       x-operation-id-original: AxlePayWeb.Api.V1.ClientPayeeRelationshipController.update_assign_factor (2)
 components:
   schemas:
-    Payee_Create_Response:
-      description: Response schema for creating a new payee relationship
-      example:
-        data:
-          client_payee_relationship:
-            contact_email: boydj@gmail.com
-            contact_first_name: Boyd
-            contact_last_name: Johnson
-            contact_phone_number: +1 (675) 544 - 8526
-            id: 544
-            payment_setting: null
-            status: pending
-          company:
-            city: New York
-            company_name: Best Trucking Company
-            ein: '123456789'
-            id: 74
-            mc_number: '12345678'
-            progress: initial
-            state: NY
-            status: under_review
-            website: www.besttrucking.com
-          payee:
-            factor_company_name: ''
-            id: 25
-      properties:
-        data:
-          properties:
-            client_payee_relationship:
-              $ref: '#/components/schemas/Client-Payee_Relationship'
-            company:
-              $ref: '#/components/schemas/Payee_Company'
-            payee:
-              $ref: '#/components/schemas/Payee'
-          type: object
-      title: Payee Create Response
-      type: object
-    Update_or_set_assigned_factor_on_an_existing_payee_relationship:
-      description: Allows setting or changing the assigned factor on an existing payee relationship.
-      example:
-        payee:
-          factor_company_id: 34
-      properties:
-        payee:
-          $ref: '#/components/schemas/Payee_Factor_Company'
-      required:
-      - payee
-      title: Update or set assigned factor on an existing payee relationship
-      type: object
-    Payee_Create:
-      description: Use the company search API to find an existing company or send the `company` parameters to create a new company. Either 'payee' (when the payee has factor) or 'client_payee_relationship' (no factor) required when creating payee relationship.
-      example:
-        client_payee_relationship:
-          contact_email: tom@tomslogistics.com
-          contact_first_name: Tom
-          contact_last_name: Brogan
-          contact_phone_number: '11231233434'
-          payment_setting:
-            account_name: New Customer LLC
-            account_number: X8508
-            address_line_1: null
-            address_line_2: null
-            city: null
-            country: null
-            method: ach
-            state: null
-            to_factor: false
-            zip_code: null
-        company:
-          city: New York
-          company_name: New Customer LLC
-          ein: '123456789'
-          mc_number: null
-          state: NY
-          website: www.newcompany.com
-      properties:
-        client_payee_relationship:
-          $ref: '#/components/schemas/Client-Payee_Relationship'
-        company:
-          $ref: '#/components/schemas/Payee_Company'
-        company_id:
-          description: Company ID. Either 'company_id' (existing company) or 'company' (new company) required when creating payee relationship.
-          type: integer
-        payee:
-          $ref: '#/components/schemas/Payee_Factor_Company'
-      title: Payee Create
-      type: object
     Payee_Index_Response:
       description: Response schema for fetching payee relationships
       example:
@@ -443,41 +356,6 @@ components:
           type: integer
       title: Payee Index Response
       type: object
-    Payee:
-      description: Payee Company Information
-      properties:
-        factor_company_name:
-          description: Name of the payee's factoring company, if they have one
-          type: string
-        id:
-          description: Payee ID
-          type: integer
-      title: Payee
-      type: object
-    Payee_Factor_Company:
-      description: Set the assigned factor for the payee.
-      properties:
-        factor_company_id:
-          description: Factor company ID. Can be found using the Search Companies endpoint or use '0' for new a factor.
-          type: integer
-      title: Payee Factor Company
-      type: object
-    Client-Payee_Relationship:
-      description: Included only if there is an existing non-deleted Client-Payee Relationship for the requesting client.
-      properties:
-        contact_email:
-          description: Contact email at the payee company.
-          type: string
-        days_to_pay_offset:
-          description: Per-relationship offset (in days) added to the payee's standard pay terms.
-          type:
-          - integer
-          - 'null'
-        id:
-          description: usable as `client_payee_relationship_id`
-          type: integer
-      title: Client-Payee Relationship
-      type: object
     Payee_Company:
       description: A payee company
       properties:
@@ -527,6 +405,128 @@ components:
       required:
       - company_name
       title: Payee Company
+      type: object
+    Payee_Factor_Company:
+      description: Set the assigned factor for the payee.
+      properties:
+        factor_company_id:
+          description: Factor company ID. Can be found using the Search Companies endpoint or use '0' for new a factor.
+          type: integer
+      title: Payee Factor Company
+      type: object
+    Client-Payee_Relationship:
+      description: Included only if there is an existing non-deleted Client-Payee Relationship for the requesting client.
+      properties:
+        contact_email:
+          description: Contact email at the payee company.
+          type: string
+        days_to_pay_offset:
+          description: Per-relationship offset (in days) added to the payee's standard pay terms.
+          type:
+          - integer
+          - 'null'
+        id:
+          description: usable as `client_payee_relationship_id`
+          type: integer
+      title: Client-Payee Relationship
+      type: object
+    Payee_Create:
+      description: Use the company search API to find an existing company or send the `company` parameters to create a new company. Either 'payee' (when the payee has factor) or 'client_payee_relationship' (no factor) required when creating payee relationship.
+      example:
+        client_payee_relationship:
+          contact_email: tom@tomslogistics.com
+          contact_first_name: Tom
+          contact_last_name: Brogan
+          contact_phone_number: '11231233434'
+          payment_setting:
+            account_name: New Customer LLC
+            account_number: X8508
+            address_line_1: null
+            address_line_2: null
+            city: null
+            country: null
+            method: ach
+            state: null
+            to_factor: false
+            zip_code: null
+        company:
+          city: New York
+          company_name: New Customer LLC
+          ein: '123456789'
+          mc_number: null
+          state: NY
+          website: www.newcompany.com
+      properties:
+        client_payee_relationship:
+          $ref: '#/components/schemas/Client-Payee_Relationship'
+        company:
+          $ref: '#/components/schemas/Payee_Company'
+        company_id:
+          description: Company ID. Either 'company_id' (existing company) or 'company' (new company) required when creating payee relationship.
+          type: integer
+        payee:
+          $ref: '#/components/schemas/Payee_Factor_Company'
+      title: Payee Create
+      type: object
+    Update_or_set_assigned_factor_on_an_existing_payee_relationship:
+      description: Allows setting or changing the assigned factor on an existing payee relationship.
+      example:
+        payee:
+          factor_company_id: 34
+      properties:
+        payee:
+          $ref: '#/components/schemas/Payee_Factor_Company'
+      required:
+      - payee
+      title: Update or set assigned factor on an existing payee relationship
+      type: object
+    Payee_Create_Response:
+      description: Response schema for creating a new payee relationship
+      example:
+        data:
+          client_payee_relationship:
+            contact_email: boydj@gmail.com
+            contact_first_name: Boyd
+            contact_last_name: Johnson
+            contact_phone_number: +1 (675) 544 - 8526
+            id: 544
+            payment_setting: null
+            status: pending
+          company:
+            city: New York
+            company_name: Best Trucking Company
+            ein: '123456789'
+            id: 74
+            mc_number: '12345678'
+            progress: initial
+            state: NY
+            status: under_review
+            website: www.besttrucking.com
+          payee:
+            factor_company_name: ''
+            id: 25
+      properties:
+        data:
+          properties:
+            client_payee_relationship:
+              $ref: '#/components/schemas/Client-Payee_Relationship'
+            company:
+              $ref: '#/components/schemas/Payee_Company'
+            payee:
+              $ref: '#/components/schemas/Payee'
+          type: object
+      title: Payee Create Response
+      type: object
+    Payee:
+      description: Payee Company Information
+      properties:
+        factor_company_name:
+          description: Name of the payee's factoring company, if they have one
+          type: string
+        id:
+          description: Payee ID
+          type: integer
+      title: Payee
       type: object
   securitySchemes:
     api_key:

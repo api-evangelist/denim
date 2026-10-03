@@ -321,79 +321,27 @@ paths:
       - Companies
 components:
   schemas:
-    Client-Debtor_Relationship:
-      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
+    Factoring_Company:
+      description: A factoring company
       properties:
-        average_dbt_past_60_days:
-          description: Average Days Beyond Terms
+        city:
+          description: City
+          type: string
+        company_name:
+          description: Company name
+          type: string
+        ein:
+          description: Federal EIN / Tax ID (9 digits)
           type:
-          - number
-          - 'null'
-        average_dso_past_60_days:
-          description: Average Days Sales Outstanding (DSO) in the past 60 days
-          type:
-          - number
-          - 'null'
-        default_job_is_factored:
-          description: Whether new jobs for this debtor default to factored funding.
-          type:
-          - boolean
+          - string
           - 'null'
         id:
-          description: usable as `client_debtor_relationship_id`
+          description: Company ID
           type: integer
-        net_terms:
-          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
-          type:
-          - integer
-          - 'null'
-        noa_status:
-          description: Notice-of-Assignment status for the relationship.
-          enum:
-          - pending_delivery
-          - delivered
-          - viewed
-          - confirmed
+        state:
+          description: State (2 Character Abbreviation)
           type: string
-        status:
-          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
-          enum:
-          - pending
-          - approved
-          - rejected
-          type: string
-      title: Client-Debtor Relationship
-      type: object
-    Debtor:
-      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
-      properties:
-        credit_limit:
-          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
-          type:
-          - integer
-          - 'null'
-        credit_used:
-          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
-          type:
-          - integer
-          - 'null'
-        net_terms:
-          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
-          type:
-          - integer
-          - 'null'
-      title: Debtor
-      type: object
-    Payee:
-      description: Payee Company Information
-      properties:
-        factor_company_name:
-          description: Name of the payee's factoring company, if they have one
-          type: string
-        id:
-          description: Payee ID
-          type: integer
-      title: Payee
+      title: Factoring Company
       type: object
     Company_Index_Response:
       description: Response schema for fetching companies
@@ -490,27 +438,116 @@ components:
           type: integer
       title: Company Index Response
       type: object
-    Factoring_Company:
-      description: A factoring company
+    Client-Debtor_Relationship:
+      description: Included only when a non-deleted Client-Debtor Relationship exists between the requesting client and the company. The `id` is usable as `client_debtor_relationship_id` in other API requests.
       properties:
-        city:
-          description: City
-          type: string
-        company_name:
-          description: Company name
-          type: string
-        ein:
-          description: Federal EIN / Tax ID (9 digits)
+        average_dbt_past_60_days:
+          description: Average Days Beyond Terms
           type:
-          - string
+          - number
+          - 'null'
+        average_dso_past_60_days:
+          description: Average Days Sales Outstanding (DSO) in the past 60 days
+          type:
+          - number
+          - 'null'
+        default_job_is_factored:
+          description: Whether new jobs for this debtor default to factored funding.
+          type:
+          - boolean
           - 'null'
         id:
-          description: Company ID
+          description: usable as `client_debtor_relationship_id`
           type: integer
-        state:
-          description: State (2 Character Abbreviation)
+        net_terms:
+          description: Net terms (payment days) for this relationship. Overrides `debtor.net_terms` when set.
+          type:
+          - integer
+          - 'null'
+        noa_status:
+          description: Notice-of-Assignment status for the relationship.
+          enum:
+          - pending_delivery
+          - delivered
+          - viewed
+          - confirmed
           type: string
-      title: Factoring Company
+        status:
+          description: Per-client approval status for this debtor relationship. `approved` relationships are ready for use. The system enforces at most one `approved` relationship per (client, debtor) — any prior duplicates are marked `rejected`. When the `best_match` sort returns multiple results for the same company, the highest-credit-amount row wins (see operation description).
+          enum:
+          - pending
+          - approved
+          - rejected
+          type: string
+      title: Client-Debtor Relationship
+      type: object
+    Factoring_Company_Index_Response:
+      description: Response schema for fetching factoring companies
+      example:
+        data:
+        - company:
+            city: Atlanta
+            company_name: Best Trucking Company
+            ein: '123456789'
+            id: 35
+            state: GA
+        - company:
+            city: Chicago
+            company_name: Boyds Logistics
+            ein: '123456789'
+            id: 36
+            state: IL
+        - company:
+            city: Louisville
+            company_name: TLD Logistics Inc
+            ein: '123456789'
+            id: 37
+            state: KY
+        page: 1
+        per_page: 3
+        total_pages: 1
+        total_results: 3
+      properties:
+        data:
+          items:
+            properties:
+              company:
+                $ref: '#/components/schemas/Factoring_Company'
+            type: object
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Factoring Company Index Response
+      type: object
+    Debtor:
+      description: Debtor attributes shared across all clients (as opposed to per-relationship attributes, which live on `client_debtor_relationship`).
+      properties:
+        credit_limit:
+          description: Shared credit limit for this debtor (in cents). In the company search response this is the debtor's `shared_credit_limit`. When a per-relationship limit is required, use `client_debtor_relationship.credit_limit`.
+          type:
+          - integer
+          - 'null'
+        credit_used:
+          description: Shared credit used by this debtor (in cents). Not populated by the company search endpoint; use `client_debtor_relationship.credit_used` for the per-relationship amount.
+          type:
+          - integer
+          - 'null'
+        net_terms:
+          description: Default net terms (payment days) for the debtor. The per-relationship value on `client_debtor_relationship.net_terms` takes precedence when set.
+          type:
+          - integer
+          - 'null'
+      title: Debtor
       type: object
     Generic_Company:
       description: A generic company
@@ -598,53 +635,16 @@ components:
           type: integer
       title: Client-Payee Relationship
       type: object
-    Factoring_Company_Index_Response:
-      description: Response schema for fetching factoring companies
-      example:
-        data:
-        - company:
-            city: Atlanta
-            company_name: Best Trucking Company
-            ein: '123456789'
-            id: 35
-            state: GA
-        - company:
-            city: Chicago
-            company_name: Boyds Logistics
-            ein: '123456789'
-            id: 36
-            state: IL
-        - company:
-            city: Louisville
-            company_name: TLD Logistics Inc
-            ein: '123456789'
-            id: 37
-            state: KY
-        page: 1
-        per_page: 3
-        total_pages: 1
-        total_results: 3
+    Payee:
+      description: Payee Company Information
       properties:
-        data:
-          items:
-            properties:
-              company:
-                $ref: '#/components/schemas/Factoring_Company'
-            type: object
-          type: array
-        page:
-          description: Current page of results
+        factor_company_name:
+          description: Name of the payee's factoring company, if they have one
+          type: string
+        id:
+          description: Payee ID
           type: integer
-        per_page:
-          description: Entities per page
-          type: integer
-        total_pages:
-          description: Total number of pages
-          type: integer
-        total_results:
-          description: Total number of results
-          type: integer
-      title: Factoring Company Index Response
+      title: Payee
       type: object
   securitySchemes:
     api_key:

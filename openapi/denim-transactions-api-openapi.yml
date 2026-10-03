@@ -91,6 +91,98 @@ paths:
       x-operation-id-original: AxlePayWeb.Api.V1.TransactionController.index (2)
 components:
   schemas:
+    Transaction_Applied:
+      description: Transaction applied to obligations
+      properties:
+        amount_due:
+          description: Amount due on the obligation in cents
+          type: integer
+        applied_amount:
+          description: Amount of the transaction applied to this obligation in cents
+          type: integer
+        company_name:
+          description: Company name of the obligation
+          type: string
+        job_number:
+          description: Job reference number
+          type: string
+        payment_status:
+          description: Payment status of the obligation
+          enum:
+          - fully_paid
+          - overpaid
+          - underpaid
+          - expected
+          - scheduled
+          type: string
+        subtype:
+          description: Subtype of the obligation
+          enum:
+          - primary
+          - advance
+          - rebate
+          type: string
+        total_amount:
+          description: Total amount of the obligation in cents
+          type: integer
+        type:
+          description: Type of the obligation
+          enum:
+          - receivable
+          - payable
+          type: string
+      title: Transaction Applied
+      type: object
+    Transaction:
+      description: A transaction and how it was applied.
+      properties:
+        applied_transactions:
+          items:
+            $ref: '#/components/schemas/Transaction_Applied'
+          type: array
+        company_id:
+          description: Company ID
+          type: integer
+        company_name:
+          description: Company name
+          type: string
+        description:
+          description: Memo or description
+          type: string
+        method:
+          description: How the transaction was sent
+          enum:
+          - ach
+          - check
+          - not_applicable
+          type: string
+        reference_number:
+          description: Check number or ACH batch number
+          type: string
+        total_amount:
+          description: Total transaction amount in cents
+          type: integer
+        transaction_date:
+          description: Datetime of the transaction in ISO format
+          type: string
+        transaction_metadata:
+          $ref: '#/components/schemas/Transaction_Metadata'
+        type:
+          description: Whether funds were sent out or received
+          enum:
+          - incoming
+          - outgoing
+          - netting
+          - adjustment
+          type: string
+        uuid:
+          description: Unique identifier for the transaction in UUID4 format
+          type: string
+        version:
+          description: Version of the transaction (increments if the transacion gets updated)
+          type: integer
+      title: Transaction
+      type: object
     Transaction_Metadata:
       description: Metadata information about a transaction.
       properties:
@@ -217,98 +309,6 @@ components:
           description: Total number of results
           type: integer
       title: Transaction Index Response
-      type: object
-    Transaction:
-      description: A transaction and how it was applied.
-      properties:
-        applied_transactions:
-          items:
-            $ref: '#/components/schemas/Transaction_Applied'
-          type: array
-        company_id:
-          description: Company ID
-          type: integer
-        company_name:
-          description: Company name
-          type: string
-        description:
-          description: Memo or description
-          type: string
-        method:
-          description: How the transaction was sent
-          enum:
-          - ach
-          - check
-          - not_applicable
-          type: string
-        reference_number:
-          description: Check number or ACH batch number
-          type: string
-        total_amount:
-          description: Total transaction amount in cents
-          type: integer
-        transaction_date:
-          description: Datetime of the transaction in ISO format
-          type: string
-        transaction_metadata:
-          $ref: '#/components/schemas/Transaction_Metadata'
-        type:
-          description: Whether funds were sent out or received
-          enum:
-          - incoming
-          - outgoing
-          - netting
-          - adjustment
-          type: string
-        uuid:
-          description: Unique identifier for the transaction in UUID4 format
-          type: string
-        version:
-          description: Version of the transaction (increments if the transacion gets updated)
-          type: integer
-      title: Transaction
-      type: object
-    Transaction_Applied:
-      description: Transaction applied to obligations
-      properties:
-        amount_due:
-          description: Amount due on the obligation in cents
-          type: integer
-        applied_amount:
-          description: Amount of the transaction applied to this obligation in cents
-          type: integer
-        company_name:
-          description: Company name of the obligation
-          type: string
-        job_number:
-          description: Job reference number
-          type: string
-        payment_status:
-          description: Payment status of the obligation
-          enum:
-          - fully_paid
-          - overpaid
-          - underpaid
-          - expected
-          - scheduled
-          type: string
-        subtype:
-          description: Subtype of the obligation
-          enum:
-          - primary
-          - advance
-          - rebate
-          type: string
-        total_amount:
-          description: Total amount of the obligation in cents
-          type: integer
-        type:
-          description: Type of the obligation
-          enum:
-          - receivable
-          - payable
-          type: string
-      title: Transaction Applied
       type: object
   securitySchemes:
     api_key:
