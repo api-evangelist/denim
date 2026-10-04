@@ -91,6 +91,64 @@ paths:
       x-operation-id-original: AxlePayWeb.Api.V1.TransactionController.index (2)
 components:
   schemas:
+    Transaction_Index_Response:
+      description: Response schema for fetching transactions
+      example:
+        data:
+        - applied_transactions:
+          - amount_due: 0
+            applied_amount: 100000
+            company_name: Shipper Co
+            job_number: test-scheduled-2
+            payment_status: fully_paid
+            subtype: primary
+            total_amount: 100000
+            type: receivable
+          company_id: 44
+          company_name: Shipper Co
+          description: payment from shipper
+          method: ach
+          reference_number: '123'
+          total_amount: 100000
+          transaction_date: '2020-10-15T16:00:00Z'
+          transaction_metadata:
+            payment_details:
+              account_name: Shipper Co
+              account_number: X1234
+              address_line_1: null
+              address_line_2: null
+              city: null
+              country: null
+              state: null
+              zip_code: null
+            payment_type: bank
+            to_factor: false
+            transfer_method: ach
+          type: incoming
+          uuid: 6b7e349e-ff53-42ec-8e99-47f1cb3aeea0
+          version: 0
+        page: 1
+        per_page: 2
+        total_pages: 3
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Transaction'
+          type: array
+        page:
+          description: Current page of results
+          type: integer
+        per_page:
+          description: Entities per page
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      title: Transaction Index Response
+      type: object
     Transaction_Applied:
       description: Transaction applied to obligations
       properties:
@@ -251,64 +309,6 @@ components:
           - string
           - 'null'
       title: Payment Details
-      type: object
-    Transaction_Index_Response:
-      description: Response schema for fetching transactions
-      example:
-        data:
-        - applied_transactions:
-          - amount_due: 0
-            applied_amount: 100000
-            company_name: Shipper Co
-            job_number: test-scheduled-2
-            payment_status: fully_paid
-            subtype: primary
-            total_amount: 100000
-            type: receivable
-          company_id: 44
-          company_name: Shipper Co
-          description: payment from shipper
-          method: ach
-          reference_number: '123'
-          total_amount: 100000
-          transaction_date: '2020-10-15T16:00:00Z'
-          transaction_metadata:
-            payment_details:
-              account_name: Shipper Co
-              account_number: X1234
-              address_line_1: null
-              address_line_2: null
-              city: null
-              country: null
-              state: null
-              zip_code: null
-            payment_type: bank
-            to_factor: false
-            transfer_method: ach
-          type: incoming
-          uuid: 6b7e349e-ff53-42ec-8e99-47f1cb3aeea0
-          version: 0
-        page: 1
-        per_page: 2
-        total_pages: 3
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/Transaction'
-          type: array
-        page:
-          description: Current page of results
-          type: integer
-        per_page:
-          description: Entities per page
-          type: integer
-        total_pages:
-          description: Total number of pages
-          type: integer
-        total_results:
-          description: Total number of results
-          type: integer
-      title: Transaction Index Response
       type: object
   securitySchemes:
     api_key:
